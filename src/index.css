@@ -1,0 +1,14 @@
+:root {
+  background-color: rgb(1, 7, 25);
+  color: white;
+  font-family: 'Poppins';
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+body {
+  min-height: 100vh;
+}
