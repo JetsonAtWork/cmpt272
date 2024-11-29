@@ -47,7 +47,8 @@ function seedCurrentIncidents(): Incident[] {
         pictureLink: "",
         comments: "Here is a comment",
         location: {
-            address: "Metrotown"
+            name: "Metrotown",
+            address: "4700 Kingsway, Burnaby, BC V5H 4M5"
         }
     },
     {
@@ -58,7 +59,8 @@ function seedCurrentIncidents(): Incident[] {
         pictureLink: "",
         comments: "Here is a comment",
         location: {
-            address: "SFU Surrey"
+            name: "SFU Surrey",
+            address: "13450 102 Ave #250, Surrey, BC V3T 0A3"
         }
     },
     {
@@ -69,7 +71,7 @@ function seedCurrentIncidents(): Incident[] {
         pictureLink: "",
         comments: "Here is a comment",
         location: {
-            address: "Burnaby Mountain"
+            address: "1660 E Broadway, Vancouver, BC V5N 1W1",
         }
     }]
 }

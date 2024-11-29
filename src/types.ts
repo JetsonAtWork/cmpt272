@@ -5,6 +5,7 @@ type Witness = {
     phoneNumber: string
 }
 type IncidentLocation = {
+    name?: string,
     address?: string,
     latlng?: LatLng, // Should be able to get this from map events
     radiusMeters?: Number // We can remove this one, but if you want to draw a 'radius' on the map, we will need it
