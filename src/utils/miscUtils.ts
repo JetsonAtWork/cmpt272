@@ -44,7 +44,7 @@ function seedCurrentIncidents(): Incident[] {
         date: new Date(),
         status: "open",
         emergencyDesc: "Fire",
-        pictureLink: "",
+        pictureLink: "https://i1.wp.com/media.globalnews.ca/videostatic/news/lvzdc2dlst-gpfh895vc6/WEB_FIRE.jpg?w=1200&quality=70&strip=all",
         comments: "Here is a comment",
         location: {
             name: "Metrotown",

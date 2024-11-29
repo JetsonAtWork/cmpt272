@@ -16,3 +16,8 @@
 body {
   min-height: 100vh;
 }
+
+.incident-details-label {
+  color: oklch(var(--bc) / 0.6);
+  @apply text-sm;
+}
