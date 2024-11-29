@@ -4,23 +4,46 @@ import "./index.css"
 import useAppContext, { AppContextProvider } from '@/hooks/useAppContext'
 import { searchForLocation } from '@/utils/locationUtils'
 import { hashPassword } from '@/utils/miscUtils'
+import IncidentList from "@/components/IncidentList";
+import AppHeader from "@/components/AppHeader";
 
 function App() {
   return (
-  <>
+    <>
       <AppContextProvider> {/* Everything that needs context should be inside this */}
-        <ExampleComponentThatUsesContext/>
-        <ExampleMap/>
+        <div className="flex flex-col h-full">
+          <AppHeader/>
+
+          <main className="grid grid-cols-[3fr_2fr] h-full gap-4 p-4 box-border flex-grow">
+            <div className="card bg-base-300 shadow-xl">
+              <ExampleMap/>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className="w-full card bg-base-300 shadow-xl h-56 p-4">
+                <h3 className="text-primary text-lg">Details</h3>
+                <div className="flex items-center justify-center h-full text-base-content">
+                  Select an incident to view details
+                </div>
+              </div>
+              <div className="w-full card bg-base-300 shadow-xl flex-grow p-4">
+                <h3 className="text-primary text-lg">Incidents</h3>
+                <IncidentList />
+              </div>
+            </div>
+          </main>
+        </div>
+        {/*<ExampleComponentThatUsesContext/>*/}
+        {/*<ExampleMap/>*/}
       </AppContextProvider>
     </>
   )
 }
 
 const ExampleMap = () => (
-  <MapContainer style={{height: '100%'}} id='map' center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
-  <TileLayer 
-    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
-    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'          
+    <MapContainer style={{height: '100%', borderRadius: '1.2rem'}} id='map' center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+      <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   />
   <Marker position={[51.505, -0.09]}>
     <Popup>

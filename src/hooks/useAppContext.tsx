@@ -1,5 +1,5 @@
 import config from "@/config";
-import { hashPassword } from "@/utils/miscUtils";
+import {hashPassword, seedCurrentIncidents} from "@/utils/miscUtils";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Incident } from "@/types";
 import { loadIncidentsFromLocalStorage } from "@/utils/localStorageUtils";
@@ -31,7 +31,8 @@ export const AppContextProvider = ({children}) => {
 
     function init() {
         const loadedIncidents = loadIncidentsFromLocalStorage()
-        setCurrentIncidents(loadedIncidents)
+        setCurrentIncidents(loadedIncidents);
+        setCurrentIncidents(seedCurrentIncidents());
         console.log('loaded incidents:', loadedIncidents);
     }
     
@@ -47,7 +48,7 @@ export const AppContextProvider = ({children}) => {
 
     function addIncident(newIncident: Incident) {
         // 1 add new incident to app state
-        setCurrentIncidents((prev) => [...prev, newIncident])
+        setCurrentIncidents((prev) => prev ? [...prev, newIncident] : [newIncident]);
         // 2 write new incident to localstorage
         // @Kyaahn I'll leave this to your judgement
     }

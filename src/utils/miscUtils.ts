@@ -1,5 +1,6 @@
 import {MD5} from 'crypto-js'
 import encBase64 from 'crypto-js/enc-base64';
+import {Incident} from "@/types";
 /** 
  * @Kyaahn
  * This converts a file to Base64 (a string).
@@ -36,8 +37,45 @@ function hashPassword(password: string) {
     const ret = encBase64.stringify(MD5(password))
     return ret
 }
+
+function seedCurrentIncidents(): Incident[] {
+    return [{
+        id: 1,
+        date: new Date(),
+        status: "open",
+        emergencyDesc: "Fire",
+        pictureLink: "",
+        comments: "Here is a comment",
+        location: {
+            address: "Metrotown"
+        }
+    },
+    {
+        id: 2,
+        date: new Date(),
+        status: "open",
+        emergencyDesc: "Missing Person",
+        pictureLink: "",
+        comments: "Here is a comment",
+        location: {
+            address: "SFU Surrey"
+        }
+    },
+    {
+        id: 3,
+        date: new Date(),
+        status: "resolved",
+        emergencyDesc: "Car Accident",
+        pictureLink: "",
+        comments: "Here is a comment",
+        location: {
+            address: "Burnaby Mountain"
+        }
+    }]
+}
   
   export {
     fileToBase64,
-    hashPassword
+    hashPassword,
+    seedCurrentIncidents
   }
