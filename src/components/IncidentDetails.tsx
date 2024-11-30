@@ -10,7 +10,7 @@ function IncidentDetails() {
     </>);
 
     return (
-        <section className="w-full card bg-base-300 shadow-xl h-72 p-4">
+        <section className="w-full card bg-base-300 shadow-xl h-72 p-4" id="details">
             {content}
         </section>
     );
@@ -30,7 +30,7 @@ function IncidentDetailsContent() {
                         Update Status
                     </button>
 
-                    <button className="btn btn-error btn-sm btn-square">
+                    <button className="btn btn-error btn-sm btn-square" title="Delete Incident">
                         {/*This icon is from Google Material Icons (https://fonts.google.com/icons) (delete)*/}
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
                     </button>
@@ -64,20 +64,20 @@ function IncidentDetailsContent() {
     );
 }
 
-function IncidentDetailsImage({pictureLink}) {
+interface IncidentDetailsImageProps {
+    pictureLink: string,
+}
+
+function IncidentDetailsImage({ pictureLink }: IncidentDetailsImageProps) {
     if (pictureLink) {
         return (
             <a href={pictureLink} target="_blank" className="relative group max-h-full w-full">
-                <svg
-                    className="absolute right-4 top-4 z-10 group-hover:scale-125 transition duration-200 ease-in-out"
-                    xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill="currentColor">
+                {/*This icon is from Google Material Icons (https://fonts.google.com/icons) (open_in_full)*/}
+                <svg className="absolute right-4 top-4 z-10 group-hover:scale-125 transition duration-200 ease-in-out" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
                     <path d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z"/>
                 </svg>
-                <div
-                    className="w-full h-full absolute top-0 right-0 rounded-box group-hover:bg-base-200 opacity-40 transition duration-200 ease-in-out"/>
-                <img src={pictureLink} alt="Incident Report Image"
-                     className="w-full h-full max-h-full object-cover rounded-box"/>
+                <div className="w-full h-full absolute top-0 right-0 rounded-box group-hover:bg-base-200 opacity-40 transition duration-200 ease-in-out"/>
+                <img src={pictureLink} alt="Incident Report Image" className="w-full h-full max-h-full object-cover rounded-box"/>
             </a>
         );
     } else {

@@ -11,6 +11,8 @@ type Context = {
     currentIncidents: Incident[] | undefined,
     selectedIncident: number | null,
     setSelectedIncident: (newSelectedIncident: number | null) => void,
+    visibleIncidents: Incident[] | undefined,
+    setVisibleIncidents: (newVisibleIncidents: Incident[]) => void,
     addIncident: (newIncident: Incident) => void,
     resolveIncident: (incidentIDToResolve: Number) => void
 }
@@ -21,6 +23,8 @@ const initialState: Context = {
     currentIncidents: undefined,
     selectedIncident: null,
     setSelectedIncident: () => {},
+    visibleIncidents: undefined,
+    setVisibleIncidents: () => {},
     addIncident: () => {},
     resolveIncident: () => {}
 }
@@ -30,6 +34,7 @@ export const AppContextProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [currentIncidents, setCurrentIncidents] = useState<Incident[]>()
     const [selectedIncident, setSelectedIncident] = useState<number | null>();
+    const [visibleIncidents, setVisibleIncidents] = useState<Incident[]>();
 
     // This will run once at the start of the app, initializing the list of current incidents from localstorage
     useEffect(() => init(),[])
@@ -76,6 +81,8 @@ export const AppContextProvider = ({children}) => {
         currentIncidents,
         selectedIncident,
         setSelectedIncident,
+        visibleIncidents,
+        setVisibleIncidents,
         addIncident,
         resolveIncident,
         loading: currentIncidents == null // Check for this being true to show some kind of loading state or prevent logic where you're operating on currentIncidents

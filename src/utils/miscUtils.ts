@@ -39,6 +39,12 @@ function hashPassword(password: string) {
 }
 
 function seedCurrentIncidents(): Incident[] {
+    const date1 = new Date();
+    date1.setMonth(2);
+
+    const date2 = new Date();
+    date2.setMonth(5);
+
     return [{
         id: 1,
         date: new Date(),
@@ -53,7 +59,7 @@ function seedCurrentIncidents(): Incident[] {
     },
     {
         id: 2,
-        date: new Date(),
+        date: date1,
         status: "open",
         emergencyDesc: "Missing Person",
         pictureLink: "",
@@ -65,13 +71,14 @@ function seedCurrentIncidents(): Incident[] {
     },
     {
         id: 3,
-        date: new Date(),
+        date: date2,
         status: "resolved",
         emergencyDesc: "Car Accident",
         pictureLink: "",
         comments: "Here is a comment",
         location: {
-            address: "1660 E Broadway, Vancouver, BC V5N 1W1",
+            name: "1660 E Broadway",
+            address: "1660 E Broadway, Vancouver, BC V5N 1W1"
         }
     }]
 }
