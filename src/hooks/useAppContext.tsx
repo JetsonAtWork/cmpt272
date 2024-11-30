@@ -42,7 +42,6 @@ export const AppContextProvider = ({children}) => {
     function init() {
         const loadedIncidents = loadIncidentsFromLocalStorage()
         setCurrentIncidents(loadedIncidents);
-        setCurrentIncidents(seedCurrentIncidents());
         console.log('loaded incidents:', loadedIncidents);
     }
     

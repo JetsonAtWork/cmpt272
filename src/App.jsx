@@ -15,22 +15,33 @@ function App() {
         <div className="flex flex-col h-full">
           <AppHeader/>
 
-          <main className="grid grid-cols-1 xl:grid-cols-[3fr_2fr] xl:h-full gap-4 p-4 box-border flex-grow">
-            <div className="card bg-base-300 shadow-xl h-[50vh] xl:h-full">
+          <MainLayoutContainer>
+            <MapLayoutContainer>
               <ExampleMap/>
-            </div>
+            </MapLayoutContainer>
+
             <div className="flex flex-col gap-4">
-              <IncidentDetails />
-              <IncidentList />
+              <IncidentDetails/>
+              <IncidentList/>
             </div>
-          </main>
+          </MainLayoutContainer>
         </div>
-        {/*<ExampleComponentThatUsesContext/>*/}
-        {/*<ExampleMap/>*/}
       </AppContextProvider>
     </>
   )
 }
+
+const MainLayoutContainer = ({children}) => (
+  <main className="grid grid-cols-1 xl:grid-cols-[3fr_2fr] xl:h-full gap-4 p-4 box-border flex-grow">
+    {children}
+  </main>
+)
+
+const MapLayoutContainer = ({children}) => (
+  <section className="card bg-base-300 shadow-xl h-[50vh] xl:h-full">
+    {children}
+  </section>
+)
 
 const ExampleMap = () => (
     <MapContainer style={{height: '100%', borderRadius: '1.2rem'}} id='map' center={[51.505, -0.09]} zoom={13}
