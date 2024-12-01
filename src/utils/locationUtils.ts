@@ -24,12 +24,13 @@ function searchForLocation(props: SearchForLocationProps): Promise<OSMQueryResul
         ).then((config) => {
             const data = config.data
             // Transform lat and lon fields to numbers
-            const ret = data.map((entry: OSMQueryResult) => ({
+            console.log('location query results', data);
+            const ret = data?.map((entry: OSMQueryResult) => ({
                 ...entry,
                 lat: Number(entry.lat),
                 lon: Number(entry.lon)
             }))
-            r(ret)
+            r(ret || [])
         })
     })) 
 }

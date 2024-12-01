@@ -43,6 +43,13 @@ type OSMQueryResult = {
         string
     ]
 }
+type mapPosition = {
+    lat: number, 
+    lon:number
+}
+
+type submitEmergencyFormFn = (submission: EmergencyReportFormData) => void
+type beginIncidentCreationFn = (lat: number, lon: number) => void
 
 
 export {
@@ -51,5 +58,8 @@ export {
     EmergencyReportFormData,
     Incident,
     IncidentStatus,
-    OSMQueryResult
+    OSMQueryResult,
+    beginIncidentCreationFn,
+    submitEmergencyFormFn,
+    mapPosition
 }

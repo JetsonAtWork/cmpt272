@@ -5,24 +5,22 @@ import { Incident } from "@/types";
 import { loadIncidentsFromLocalStorage } from "@/utils/localStorageUtils";
 
 type Context = {
-    isLoggedIn: boolean,
     loading: boolean,
-    login: (password: string) => void,
     currentIncidents: Incident[] | undefined,
     selectedIncident: number | null,
     setSelectedIncident: (newSelectedIncident: number | null) => void,
     addIncident: (newIncident: Incident) => void,
-    resolveIncident: (incidentIDToResolve: Number) => void
+    resolveIncident: (incidentIDToResolve: Number) => void,
+    isMacOS: boolean
 }
 const initialState: Context = {
-    isLoggedIn: false,
     loading: true,
-    login: () => {},
     currentIncidents: undefined,
     selectedIncident: null,
     setSelectedIncident: () => {},
     addIncident: () => {},
-    resolveIncident: () => {}
+    resolveIncident: () => {},
+    isMacOS: false
 }
 const AppContext = createContext<Context>(initialState)
 
@@ -30,6 +28,7 @@ export const AppContextProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [currentIncidents, setCurrentIncidents] = useState<Incident[]>()
     const [selectedIncident, setSelectedIncident] = useState<number | null>();
+    const [isMacOS, setIsMacOS] = useState(false)
 
     // This will run once at the start of the app, initializing the list of current incidents from localstorage
     useEffect(() => init(),[])
@@ -38,18 +37,11 @@ export const AppContextProvider = ({children}) => {
         const loadedIncidents = loadIncidentsFromLocalStorage()
         setCurrentIncidents(loadedIncidents);
         setCurrentIncidents(seedCurrentIncidents());
+        const isMac = navigator.userAgent.includes('Mac OS X')
+        setIsMacOS(isMac)
         console.log('loaded incidents:', loadedIncidents);
     }
     
-    function login(password: string) {
-        const hashedPassword = hashPassword(password)
-        if (hashedPassword === config.hashedPassword) {
-            setIsLoggedIn(true)
-            console.log('LOGIN SUCCESS');
-        } else {
-            console.log('LOGIN FAIL: password hash did not match');
-        }
-    }
 
     function addIncident(newIncident: Incident) {
         // 1 add new incident to app state
@@ -71,13 +63,12 @@ export const AppContextProvider = ({children}) => {
     }
 
     const value = {
-        isLoggedIn,
-        login,
         currentIncidents,
         selectedIncident,
         setSelectedIncident,
         addIncident,
         resolveIncident,
+        isMacOS,
         loading: currentIncidents == null // Check for this being true to show some kind of loading state or prevent logic where you're operating on currentIncidents
     }
 

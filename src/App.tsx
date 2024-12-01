@@ -7,17 +7,37 @@ import { hashPassword } from '@/utils/miscUtils'
 import IncidentList from "@/components/IncidentList";
 import AppHeader from "@/components/AppHeader";
 import IncidentDetails from "@/components/IncidentDetails";
+import ReportMap from '@/components/ReportMap'
+import { beginIncidentCreationFn, mapPosition, submitEmergencyFormFn } from '@/types'
+import { IncidentReportDialog } from '@/components/IncidentReportDialog'
+import { useState } from 'react'
 
 function App() {
+  const [newIncidentPosition, setNewIncidentPosition] = useState<mapPosition | null>()
+  const startIncidentForm: beginIncidentCreationFn = (lat, lon) => {
+
+  }
+  const handleIncidentFormSubmission: submitEmergencyFormFn = (submission) => {
+
+  }
+  function handleIncidentFormCancelled() {
+    
+  }
   return (
     <>
       <AppContextProvider> {/* Everything that needs context should be inside this */}
         <div className="flex flex-col h-full">
           <AppHeader/>
-
           <main className="grid grid-cols-[3fr_2fr] h-full gap-4 p-4 box-border flex-grow">
             <div className="card bg-base-300 shadow-xl">
-              <ExampleMap/>
+              {/* <ExampleMap/> */}
+              <ReportMap 
+                  {...{
+                    startIncidentForm, 
+                    newIncidentPosition, 
+                    setNewIncidentPosition
+                  }}
+                />
             </div>
             <div className="flex flex-col gap-4">
               <IncidentDetails />
@@ -38,6 +58,12 @@ function App() {
             </div>
           </main>
         </div>
+        <IncidentReportDialog 
+          dialogID='incident-form-dialog'
+          formID='incident-form'
+          onIncidentFormSubmit={handleIncidentFormSubmission}
+          onIncidentFormCancel={handleIncidentFormCancelled}
+        />
         {/*<ExampleComponentThatUsesContext/>*/}
         {/*<ExampleMap/>*/}
       </AppContextProvider>
@@ -45,25 +71,9 @@ function App() {
   );
 }
 
-const ExampleMap = () => (
-    <MapContainer style={{height: '100%', borderRadius: '1.2rem'}} id='map' center={[51.505, -0.09]} zoom={13}
-                  scrollWheelZoom={false}>
-      <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  />
-  <Marker position={[51.505, -0.09]}>
-    <Popup>
-      A pretty CSS3 popup. <br /> Easily customizable.
-    </Popup>
-  </Marker>
-</MapContainer>
-)
-
 // This shows how to get the methods and state variables from the context provider. This is how you access our app's global state
 const ExampleComponentThatUsesContext = () => {
-  const { isLoggedIn, addIncident, currentIncidents, loading, login, resolveIncident } = useAppContext();
-  console.log('Is the user logged in? ', isLoggedIn);
+  const { addIncident, currentIncidents, loading, resolveIncident } = useAppContext();
   console.log('Is the app still loading the currentIncidents list from localstorage?', loading);
   console.log('This is the currentIncidents list', currentIncidents);
 
