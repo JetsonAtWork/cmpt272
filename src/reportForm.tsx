@@ -33,20 +33,20 @@ const [reportState, setForm] = useState<Incident>({
 });
 
 
-const formUpdated = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, section: formSection, field: string) => {
-    setForm(otherFormData => ({
-        ...otherFormData,
-        [section]: {
-            ...otherFormData[section],
-            [field]: event.target.value
+const formUpdated = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, element: formSection, value: string) => {
+    setForm(savedData => ({
+        ...savedData,
+        [element]: {
+            ...savedData[element],
+            [value]: event.target.value
         }
     }));
 };
 
-const formUpdatednotEnclosved = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, section: string, field: string) => {
-    setForm((prevFormData) => ({
-        ...prevFormData,
-        [section]: event.target.value
+const formUpdatednotEnclosved = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, element: string, value: string) => {
+    setForm((savedData) => ({
+        ...savedData,
+        [element]: event.target.value
     }));
 };
 
@@ -55,8 +55,8 @@ const fileUploaded = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if(file){
         try {
             const base64String = await fileToBase64(file);
-            setForm((prevFormData) => ({
-                ...prevFormData,
+            setForm((savedData) => ({
+                ...savedData,
                 pictureLink: base64String,
             }));
         } catch(error) {
