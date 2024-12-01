@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 
+document.querySelector("html").setAttribute("data-theme", "night");
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

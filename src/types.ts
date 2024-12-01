@@ -5,6 +5,7 @@ type Witness = {
     phoneNumber: string
 }
 type IncidentLocation = {
+    name?: string,
     address?: string,
     latlng?: LatLng, // Should be able to get this from map events
     radiusMeters?: Number // We can remove this one, but if you want to draw a 'radius' on the map, we will need it
@@ -16,7 +17,7 @@ type EmergencyReportFormData = {
     comments: string | string[] // @Kyaahn depending on how you want to do this field in submission, you can make it one large string or multiple
 }
 type Incident = EmergencyReportFormData & {
-    id: Number; // Something to uniquely identify incidents. Probably generate a uuid of sufficient length for this
+    id: number; // Something to uniquely identify incidents. Probably generate a uuid of sufficient length for this
     date: Date;
     status: IncidentStatus
 }
