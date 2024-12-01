@@ -3,7 +3,7 @@
 @tailwind components;
 
 :root {
-  background-color: rgb(1, 7, 25);
+  background-color: oklch(var(--b1));
   color: white;
   font-family: 'Poppins';
 }
@@ -15,4 +15,9 @@
 
 body {
   min-height: 100vh;
+}
+
+.incident-details-label {
+  color: oklch(var(--bc) / 0.6);
+  @apply text-sm;
 }
