@@ -20,12 +20,12 @@ import encBase64 from 'crypto-js/enc-base64';
  * https://www.npmjs.com/package/browser-image-compression
  * https://www.npmjs.com/package/sharp (this one is really good but quite a large package)
  * */ 
-function fileToBase64(file: Blob) {
+function fileToBase64(file: Blob): Promise<string>{
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event) => {
           if (event.target)
-              resolve(event.target.result);
+              resolve(event.target.result as string);
           else throw new Error('Failed to read file')
       };
       reader.readAsDataURL(file);

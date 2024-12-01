@@ -4,6 +4,8 @@ import "./index.css"
 import useAppContext, { AppContextProvider } from '@/hooks/useAppContext'
 import { searchForLocation } from '@/utils/locationUtils'
 import { hashPassword } from '@/utils/miscUtils'
+import { useState } from 'react';
+import SubmitReportForm from './reportForm';
 
 function App() {
   return (
@@ -54,6 +56,11 @@ const ExampleComponentThatUsesContext = () => {
     const hashed = hashPassword('randomPassword')
     console.log("Hash for string 'randomPassword'", hashed);
   }
+
+    //for testing form
+    const [showForm, setShowForm] = useState(false);
+    const toggleForm = () => setShowForm((prev) => !prev);
+
   return (
     <div className="w-full my-4 text-center">
       <p>here are some buttons that test some of the util functions</p>
@@ -61,8 +68,13 @@ const ExampleComponentThatUsesContext = () => {
       <div className='flex justify-center gap-2'>
         <button onClick={testSearchForLocation} className='btn btn-lg btn-primary'>run test location query</button>
         <button onClick={testPasswordHash} className='btn btn-lg btn-secondary'>test password hash</button>
-
+        <button onClick={toggleForm} className='btn btn-lg btn-success'>{showForm ? 'hide form': 'show form'}</button>
       </div>
+      {showForm && (
+        <div className="inset-0 flex justify-center items-center">
+          <SubmitReportForm />
+        </div>
+      )}
     </div>
   )
 }

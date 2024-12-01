@@ -4,6 +4,8 @@ type Witness = {
     name: string,
     phoneNumber: string
 }
+type formSection = "person" | "location" | "notEnclosed" | "emergencyDesc";
+
 type IncidentLocation = {
     address?: string,
     latlng?: LatLng, // Should be able to get this from map events
@@ -19,6 +21,7 @@ type Incident = EmergencyReportFormData & {
     id: Number; // Something to uniquely identify incidents. Probably generate a uuid of sufficient length for this
     date: Date;
     status: IncidentStatus
+    person: Witness
 }
 type IncidentStatus = 'open' | 'resolved'
 type OSMQueryResult = {
@@ -50,5 +53,6 @@ export {
     EmergencyReportFormData,
     Incident,
     IncidentStatus,
+    formSection,
     OSMQueryResult
 }
