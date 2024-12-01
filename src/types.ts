@@ -18,7 +18,7 @@ type EmergencyReportFormData = {
     comments: string | string[] // @Kyaahn depending on how you want to do this field in submission, you can make it one large string or multiple
 }
 type Incident = EmergencyReportFormData & {
-    id: Number; // Something to uniquely identify incidents. Probably generate a uuid of sufficient length for this
+    id: string; // Something to uniquely identify incidents. Probably generate a uuid of sufficient length for this
     date: Date;
     status: IncidentStatus
     person: Witness

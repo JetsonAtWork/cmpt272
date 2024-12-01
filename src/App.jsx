@@ -13,6 +13,7 @@ function App() {
       <AppContextProvider> {/* Everything that needs context should be inside this */}
         <ExampleComponentThatUsesContext/>
         <ExampleMap/>
+        <SubmitReportForm />
       </AppContextProvider>
     </>
   )

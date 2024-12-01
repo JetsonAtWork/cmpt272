@@ -3,13 +3,18 @@ import { IncidentLocation, Witness, EmergencyReportFormData, Incident, formSecti
 import React from "react";
 import { fileToBase64 } from './utils/miscUtils';
 import { loadIncidentsFromLocalStorage } from './utils/localStorageUtils';
+import useAppContext from "@/hooks/useAppContext"; 
+import { AppContextProvider } from './hooks/useAppContext'; 
 import { v4 as uuidv4 } from 'uuid';
 import { latLng } from 'leaflet';
 
 
+
+
 const SubmitReportForm = () => {
+const { addIncident } = useAppContext()
 const [reportState, setForm] = useState<Incident>({
-    id: 0,
+    id: "",
     date: new Date(),
     status: "open",
     person: {
@@ -70,10 +75,7 @@ const formFinished = (event: React.FormEvent) => {
     };
     //logs everything together
     event.preventDefault();
-    const previousList = loadIncidentsFromLocalStorage();
-    const newList = [...previousList, setUuid];
-    localStorage.setItem("incidents", JSON.stringify(newList));
-
+    addIncident(setUuid);
     //you can delete this, this just makes sure everything is sent to localstorage
     const current = loadIncidentsFromLocalStorage();
     console.log("incidents array list", current);

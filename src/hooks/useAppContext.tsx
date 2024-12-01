@@ -10,7 +10,7 @@ type Context = {
     login: (password: string) => void,
     currentIncidents: Incident[] | undefined,
     addIncident: (newIncident: Incident) => void,
-    resolveIncident: (incidentIDToResolve: Number) => void
+    resolveIncident: (incidentIDToResolve: string) => void
 }
 const initialState: Context = {
     isLoggedIn: false,
@@ -49,19 +49,26 @@ export const AppContextProvider = ({children}) => {
         // 1 add new incident to app state
         setCurrentIncidents((prev) => [...prev, newIncident])
         // 2 write new incident to localstorage
-        // @Kyaahn I'll leave this to your judgement
+        const previousList = loadIncidentsFromLocalStorage();
+        const newList = [...previousList, newIncident];
+        localStorage.setItem("incidents", JSON.stringify(newList));
     }
     
-    function resolveIncident(incidentIDToResolve: Number) {
+    function resolveIncident(incidentIDToResolve: string) {
         // 1 modify incident in app state
         const newIncidentArray: Incident[] = currentIncidents.map((incident) => 
             incident.id === incidentIDToResolve
                 ? {...incident, status: 'resolved'}
                 : incident
         )
-        setCurrentIncidents(newIncidentArray)
+        setCurrentIncidents(newIncidentArray);
         // 2 write modified incident to localstorage
-        // @Kyaahn I'll leave this to your judgement
+        const previousList = loadIncidentsFromLocalStorage();
+        const newList = previousList.map((incident) => 
+            incident.id === incidentIDToResolve
+                ? {...incident, status: 'resolved'}
+                : incident
+        )
     }
 
     const value = {
