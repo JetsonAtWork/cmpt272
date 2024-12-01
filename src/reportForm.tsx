@@ -51,16 +51,15 @@ const formUpdatednotEnclosved = (event: React.ChangeEvent<HTMLTextAreaElement | 
 };
 
 const fileUploaded = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if(file){
+    if(event.target.files?.[0]){
         try {
-            const base64String = await fileToBase64(file);
+            const pic = await fileToBase64(event.target.files?.[0]);
             setForm((savedData) => ({
                 ...savedData,
-                pictureLink: base64String,
+                pictureLink: pic,
             }));
         } catch(error) {
-            console.log("error: ", error)
+            console.log("picture error: ", error)
         }
     }
 };
