@@ -1,6 +1,6 @@
 import useAppContext from "@/hooks/useAppContext";
 import IncidentStatusBadge from "@/components/IncidentStatusBadge";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Fuse from "fuse.js";
 import {Incident} from "@/types";
 
@@ -26,8 +26,10 @@ function IncidentList() {
         fuse.setCollection(incidentsToShow ?? []);
     }, [incidentsToShow]);
 
-    const filteredIncidents = filter === "" ? incidentsToShow : fuse.search(filter).map(result => result.item);
-    filteredIncidents?.sort(sortIncidents);
+    const sortedAndFilteredIncidents = useMemo(() => {
+        const filteredIncidents = filter === "" ? incidentsToShow : fuse.search(filter).map(result => result.item);
+        return filteredIncidents?.sort(sortIncidents);
+    }, [incidentsToShow, fuse, filter, sortState]);
 
     function clearAllFilters() {
         setFilter("");
@@ -74,7 +76,7 @@ function IncidentList() {
             </div>
 
             <div className="flex h-full flex-col justify-between gap-4">
-                <IncidentListTable incidents={filteredIncidents} selectedIncident={selectedIncident} setSelectedIncident={setSelectedIncident} sortState={sortState} setSortState={setSortState} />
+                <IncidentListTable incidents={sortedAndFilteredIncidents} selectedIncident={selectedIncident} setSelectedIncident={setSelectedIncident} sortState={sortState} setSortState={setSortState} />
 
                 <small className="text-base-content opacity-50 text-xs flex flex-row items-center gap-1">
                     {/*This icon is from Google Material Icons (https://fonts.google.com/icons) (info)*/}
@@ -88,8 +90,8 @@ function IncidentList() {
 
 interface IncidentListTableProps {
     incidents: Incident[],
-    selectedIncident: number,
-    setSelectedIncident: (incidentId: number) => void,
+    selectedIncident: string,
+    setSelectedIncident: (incidentId: string) => void,
     sortState: SortState,
     setSortState: (sortState: SortState) => void,
 }
@@ -128,7 +130,7 @@ function IncidentListTable({ incidents, selectedIncident, setSelectedIncident, s
                         <tr key={incident.id.toString()} className={`!border-b-neutral ${selectedIncident === incident.id ? "bg-primary bg-opacity-30" : "hover cursor-pointer"}`} onClick={() => setSelectedIncident(incident.id)}>
                             <td>{incident.emergencyDesc}</td>
                             <td>{incident.location.name ?? incident.location.address}</td>
-                            <td>{incident.date.toDateString()}</td>
+                            <td>{incident.date.toString()}</td>
                             <td><IncidentStatusBadge status={incident.status}/></td>
                         </tr>
                     )
