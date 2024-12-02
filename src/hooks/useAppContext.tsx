@@ -9,6 +9,7 @@ type Context = {
     resolveIncident: (incidentIDToResolve: string) => void;
     visibleIncidents: Incident[] | undefined;
     setVisibleIncidents: (newVisibleIncidents: Incident[]) => void;
+    deleteIncident: (incidentIDToDelete: string) => void;
     isMacOS: boolean;
     selectedIncident: string;
     setSelectedIncident: (incidentID: string) => void;
@@ -65,6 +66,19 @@ export const AppContextProvider = ({children}) => {
                 : incident
         );
     }
+    function deleteIncident(incidentIDToDelete: string) {
+        // 1 delete incident in app state
+        setCurrentIncidents((prev)=>
+            prev ? prev.filter((incident) => incident.id !== incidentIDToDelete) : []
+        )
+        
+        setSelectedIncident(null); //because we are deleting the selected incident
+        
+        // 2 write modified incident to localstorage
+        const previousList = loadIncidentsFromLocalStorage()
+        const newList = previousList.filter((incident) => incident.id !== incidentIDToDelete)
+        localStorage.setItem("incidents", JSON.stringify(newList))
+    }
 
     const value = {
         currentIncidents,
@@ -74,6 +88,7 @@ export const AppContextProvider = ({children}) => {
         setVisibleIncidents,
         addIncident,
         resolveIncident,
+        deleteIncident,
         isMacOS,
         loading: currentIncidents == null
     };
