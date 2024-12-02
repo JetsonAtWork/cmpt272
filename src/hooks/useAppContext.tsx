@@ -7,22 +7,26 @@ type Context = {
     currentIncidents: Incident[] | undefined;
     addIncident: (newIncident: Incident) => void;
     resolveIncident: (incidentIDToResolve: string) => void;
+    visibleIncidents: Incident[] | undefined;
+    setVisibleIncidents: (newVisibleIncidents: Incident[]) => void;
     isMacOS: boolean;
     selectedIncident: string;
-    setSelectedIncident: (incidentID: string) => void
+    setSelectedIncident: (incidentID: string) => void;
 };
 const initialState: Partial<Context> = {
     loading: true,
     currentIncidents: undefined,
     selectedIncident: null,
+    visibleIncidents: undefined,
     isMacOS: false,
 };
 const AppContext = createContext<Partial<Context>>(initialState);
 
-export const AppContextProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [currentIncidents, setCurrentIncidents] = useState<Incident[]>();
+export const AppContextProvider = ({children}) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [currentIncidents, setCurrentIncidents] = useState<Incident[]>()
     const [selectedIncident, setSelectedIncident] = useState<string | null>();
+    const [visibleIncidents, setVisibleIncidents] = useState<Incident[]>();
     const [isMacOS, setIsMacOS] = useState(false);
 
     // This will run once at the start of the app, initializing the list of current incidents from localstorage
@@ -31,7 +35,7 @@ export const AppContextProvider = ({ children }) => {
     function init() {
         const loadedIncidents = loadIncidentsFromLocalStorage();
         setCurrentIncidents(loadedIncidents);
-        // console.log("loaded incidents:", loadedIncidents);
+        console.log('loaded incidents:', loadedIncidents);
     }
 
     function addIncident(newIncident: Incident) {
@@ -66,6 +70,8 @@ export const AppContextProvider = ({ children }) => {
         currentIncidents,
         selectedIncident,
         setSelectedIncident,
+        visibleIncidents,
+        setVisibleIncidents,
         addIncident,
         resolveIncident,
         isMacOS,

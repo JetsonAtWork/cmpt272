@@ -71,7 +71,8 @@ function seedCurrentIncidents(): Incident[] {
         pictureLink: "",
         comments: "Here is a comment",
         location: {
-            address: "1660 E Broadway, Vancouver, BC V5N 1W1",
+            name: "1660 E Broadway",
+            address: "1660 E Broadway, Vancouver, BC V5N 1W1"
         }
     }]
 }
@@ -82,7 +83,7 @@ function condStr(condition: boolean, str: string) {
 
 function validatePhoneNumber(num: string) {
     const validLengths = [10,11]
-    return validLengths.includes(num.length) 
+    return validLengths.includes(num.length)
 }
 
 function curry(fn, ...params: any[]) {
@@ -94,7 +95,7 @@ function curry(fn, ...params: any[]) {
     };
     return curried(...params);
 };
-  
+
   export {
     fileToBase64,
     hashPassword,
