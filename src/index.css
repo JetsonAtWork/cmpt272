@@ -50,3 +50,7 @@ body {
   color: oklch(var(--bc) / 0.6);
   @apply text-sm;
 }
+
+.special {
+  display: hidden;
+}

@@ -1,10 +1,16 @@
 import useAppContext from "@/hooks/useAppContext";
 import IncidentStatusBadge from "@/components/IncidentStatusBadge";
+import { Incident } from "@/types";
+import { useMemo } from "react";
 
 function IncidentList() {
     const { currentIncidents, selectedIncident, setSelectedIncident } = useAppContext();
+    const sortedIncidents = 
+        useMemo(() => 
+            currentIncidents?.sort(compareIncidents),
+            [currentIncidents])
 
-    const rows = currentIncidents?.map((incident) => {
+    const rows = sortedIncidents?.map((incident) => {
         return (
             <tr key={incident.id.toString()} className={selectedIncident === incident.id ? "bg-primary bg-opacity-30" : "hover cursor-pointer"} onClick={() => setSelectedIncident(incident.id)}>
                 <td>{incident.emergencyDesc}</td>
@@ -40,6 +46,13 @@ function IncidentList() {
             </table>
         </>
     )
+}
+
+function compareIncidents(a: Incident, b: Incident) {
+    if (a.status === 'open' && b.status === 'resolved') return -1
+    if (a.status === 'open' && b.status === 'open') return 0
+    if (a.status === 'resolved' && b.status === 'open') return 1
+    
 }
 
 export default IncidentList;

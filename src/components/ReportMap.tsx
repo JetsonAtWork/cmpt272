@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, LegacyRef, FormEvent, MouseEvent } from 'react';
-import { Circle, LayerGroup, LayersControl, MapContainer, Popup, TileLayer, useMapEvents, ZoomControl } from 'react-leaflet';
+import { Circle, LayerGroup, LayersControl, MapContainer, Popup as PopupElement, TileLayer, useMapEvents, ZoomControl } from 'react-leaflet';
 import { searchForLocation } from '@/utils/locationUtils';
-import { DragEndEvent, LatLng, LeafletMouseEvent, Map, Marker, popup } from 'leaflet';
+import { DragEndEvent, LatLng, LeafletMouseEvent, Map, Marker, Popup,  } from 'leaflet';
 import { Marker as MarkerElement } from 'react-leaflet'
 import config from '@/config';
 import useAppContext from '@/hooks/useAppContext';
-import { beginIncidentCreationFn, mapPosition } from '@/types';
+import { beginIncidentCreationFn, Incident, mapPosition } from '@/types';
+import { curry } from '@/utils/miscUtils';
 
 type ReportMapProps = {
   startIncidentForm: beginIncidentCreationFn,
@@ -23,8 +24,14 @@ const ReportMap = ({
   const [map, setMap] = useState<Map>()
   const inputRef = useRef<HTMLInputElement>()
   const markerInCreationPopupRef = useRef()
-  const { isMacOS } = useAppContext()
-
+  const { 
+    isMacOS,
+    selectedIncident,
+    currentIncidents,
+    loading,
+    setSelectedIncident
+   } = useAppContext()
+  
   const handleSearch = async () => {
     try {
       const results = await searchForLocation({ query: address });
@@ -80,6 +87,15 @@ const ReportMap = ({
     }
   }, [markers]);
 
+  useEffect(() => {
+    if (!loading && map) {
+      const currentIncident = currentIncidents.find((incident) => incident.id === selectedIncident)
+      if (!currentIncident) return
+      console.log('beginning selectedIncidentPan');
+      panMapToLatLng(currentIncident.location.latlng)
+    }
+  },[selectedIncident])
+
   // Listen for keypresses to focus input
   useEffect(() => {
     window.addEventListener('keydown', onKeyPress)
@@ -93,20 +109,22 @@ const ReportMap = ({
     }
   }
 
-  function handleMarkerClicked(e: LeafletMouseEvent) {
-    panMapToLatLng(e.latlng, config.MarkerZoomAmount)
+  function handleMarkerClicked(incident: Incident, e: LeafletMouseEvent) {
+    console.log('marker clicked', incident, e);
+    setSelectedIncident(incident.id)
   }
 
-  function panMapToLatLng(latLng: LatLng, zoomAmount: number) {
+  function panMapToLatLng(latLng: LatLng, zoomAmount?: number) {
     if (!map) {
       return
     }
     map.setView(
       latLng, 
-      zoomAmount || map.getZoom() || 15 || config.MarkerZoomAmount, 
-      { animate: true  }
+      zoomAmount || map.getZoom() || config.MarkerZoomAmount, 
+      { animate: true,   }
     )
   }
+  // console.log('map cebter', map?.getCenter());
 
   function handleMapClicked(e: LeafletMouseEvent) {
     console.log('map clicked', e);
@@ -116,7 +134,7 @@ const ReportMap = ({
 
   function placeCandidateMarker(lat, lon) {
     setNewIncidentPosition({ lat, lon })
-    panMapToLatLng(new LatLng(lat,lon), config.MarkerZoomAmount) // Pan map to new marker
+    panMapToLatLng(new LatLng(lat,lon)) // Pan map to new marker
   }
 
   function handleSubmit(e: FormEvent) {
@@ -185,18 +203,17 @@ const ReportMap = ({
             popupRef={markerInCreationPopupRef}
             candidate={newIncidentPosition}
             setCandidate={setNewIncidentPosition}
-            onLocationConfirm={startIncidentForm}
+            onLocationConfirm={handleCandidateLocationConfirmed}
             onLocationDeny={cancelIncidentCreation}
           />
         )}
-        {markers.map((marker, index) => (
-          <MarkerElement eventHandlers={{ click: handleMarkerClicked }} key={index} position={[marker.lat, marker.lon]}>
-            <Popup>
-              <strong>{marker.name}</strong>
-              <br />
-              Coordinates: {marker.lat}, {marker.lon}
-            </Popup>
-          </MarkerElement>
+        {currentIncidents?.map((incident, index) => (
+          <IncidentMarker 
+            key={incident.id} 
+            incident={incident}
+            selectedIncident={selectedIncident}
+            onClick={curry(handleMarkerClicked, incident)}
+            />
         ))}
         <MapEvents />
       </MapContainer>
@@ -204,30 +221,6 @@ const ReportMap = ({
     </div>
   );
 };
-
-//  List of visible markers
-const MarkersList = ({ visibleMarkers, handleDeleteMarker, markers }) => (
-        <div className="marker-list mt-4">
-        <h3 className="text-lg font-bold">Visible Markers</h3>
-        <ul className="list-none pl-0">
-        {visibleMarkers.map((marker, index) => (
-          <li key={index} className="flex items-center space-x-2">
-          {/* Delete button on the left */}
-          <button
-            onClick={() => handleDeleteMarker(markers.indexOf(marker))}
-            className="btn btn-sm btn-error"
-          >
-            X
-          </button>
-          {/* Marker details to the right of X button */}
-          <span>
-            {marker.name} ({marker.lat.toFixed(5)}, {marker.lon.toFixed(5)})
-          </span>
-          </li>
-        ))}
-        </ul>
-      </div>
-)
 
 const MarkerCandidate = ({ map, popupRef, candidate, setCandidate, onLocationConfirm, onLocationDeny }) => {
   const [popupReady, setPopupReady] = useState(false)
@@ -261,6 +254,7 @@ const MarkerCandidate = ({ map, popupRef, candidate, setCandidate, onLocationCon
   function handleConfirmClicked() {
     console.log('confirm clicked');
     popupRef._closeButton.click()
+    onLocationConfirm()
   }
 
   function handleMarkerDragEnd(e: DragEndEvent) {
@@ -280,7 +274,7 @@ const MarkerCandidate = ({ map, popupRef, candidate, setCandidate, onLocationCon
       position={[candidate.lat, candidate.lon]}
       draggable
       >
-      <Popup closeOnClick={false} autoClose={false} ref={handlePopupReady} className='custom-popup'>
+      <PopupElement closeOnClick={false} autoClose={false} ref={handlePopupReady} className='custom-popup'>
         <div className="leaflet-fade-anim card card-compact pointer-events-auto min-w-[19rem] bg-base-300 text-center">
           <div className="card-body items-center">
             <div className="card-title w-fit text-primary">
@@ -297,7 +291,52 @@ const MarkerCandidate = ({ map, popupRef, candidate, setCandidate, onLocationCon
             </div>
           </div>
         </div>
-      </Popup>
+      </PopupElement>
+  </MarkerElement>
+  )
+}
+
+
+type IncidentMarkerProps = {
+  incident: Incident,
+  selectedIncident: string
+  onClick: (e: LeafletMouseEvent) => void
+}
+const IncidentMarker = ({ 
+  incident,
+  selectedIncident,
+  onClick
+}: IncidentMarkerProps) => {
+  const [popupReady, setPopupReady] = useState(false)
+  const popupRef = useRef<Popup>()
+  const markerRef = useRef<Marker>()
+
+  useEffect(() => {
+    if (popupReady && selectedIncident === incident.id) {
+      markerRef.current.openPopup()
+    }
+  },[selectedIncident, popupReady])
+
+  function handlePopupReady(newRef) {
+    setPopupReady(true)
+    popupRef.current = newRef
+  }
+  return (
+    <MarkerElement 
+      position={incident.location.latlng}
+      eventHandlers={{click: onClick}}
+      ref={markerRef}
+      >
+      <PopupElement autoPan={false} keepInView={false} ref={handlePopupReady} className='custom-popup'>
+        <div className="leaflet-fade-anim card card-compact pointer-events-auto min-w-[19rem] bg-base-300 text-center">
+          <div className="card-body items-center">
+            <div className="card-title w-fit text-primary">
+              {incident.emergencyDesc}
+              {selectedIncident === incident.id && ('I\'m the selected incident. Hooray!')}
+            </div>
+          </div>
+        </div>
+      </PopupElement>
   </MarkerElement>
   )
 }

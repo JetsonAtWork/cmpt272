@@ -15,13 +15,21 @@ import { useState } from 'react'
 function App() {
   const [newIncidentPosition, setNewIncidentPosition] = useState<mapPosition | null>()
   const startIncidentForm: beginIncidentCreationFn = (lat, lon) => {
-
+    const incidentDialog = document.getElementById('incident-form-dialog') as HTMLDialogElement
+    if (incidentDialog) {
+      incidentDialog.showModal()
+    } else {
+      console.error('could not find incident dialog element')
+    }
   }
   const handleIncidentFormSubmission: submitEmergencyFormFn = (submission) => {
-
+    
   }
   function handleIncidentFormCancelled() {
     
+  }
+  function handleDialogFinished() {
+    setNewIncidentPosition(null)
   }
   return (
     <>
@@ -59,6 +67,7 @@ function App() {
           </main>
         </div>
         <IncidentReportDialog 
+          incidentPosition={newIncidentPosition}
           dialogID='incident-form-dialog'
           formID='incident-form'
           onIncidentFormSubmit={handleIncidentFormSubmission}
