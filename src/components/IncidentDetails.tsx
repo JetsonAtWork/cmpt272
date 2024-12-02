@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { hashPassword } from '@/utils/miscUtils'
 
 
+
 function IncidentDetails() {
     const { selectedIncident } = useAppContext();
 
@@ -20,14 +21,14 @@ function IncidentDetails() {
 }
 
 function IncidentDetailsContent() {
-    const {currentIncidents, selectedIncident } = useAppContext();
+    const {currentIncidents, selectedIncident, deleteIncident, resolveIncident } = useAppContext();
     const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
     const [actionType, setActionType] = useState(null)
     const [passwordError, setPasswordError] = useState("")
     const incident = currentIncidents.find(incident => incident.id === selectedIncident);
     const passwordRef = useRef(null)
     const passwordDialogRef= useRef(null)
-    const realHashedPassword = "098f6bcd4621d373cade4e832627b4f6"//This is just "test" hashed
+    const realHashedPassword = hashPassword("test")//This is just "test" hashed
 
     const closePasswordDialog =()=>{
         if(passwordDialogRef.current){ 
@@ -47,9 +48,13 @@ function IncidentDetailsContent() {
         if(enteredHashedPassword == realHashedPassword){
             if(actionType == "modify"){
                 //Modify the Incident
+                resolveIncident(incident.id)
             }
             if(actionType == "delete"){
                 //delete the Incident
+                if(incident){
+                    deleteIncident(incident.id)
+                }
             }
             closePasswordDialog()
         }
@@ -99,7 +104,6 @@ function IncidentDetailsContent() {
 
                 <IncidentDetailsImage pictureLink={incident.pictureLink}/>
             </div>
-            
             <dialog ref = {passwordDialogRef} id="passwordDialog" className="modal">
                 <div className="modal-box">
                   <h3 className="font-bold text-lg">Enter Your Password</h3>
