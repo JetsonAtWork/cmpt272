@@ -1,5 +1,8 @@
 import useAppContext from "@/hooks/useAppContext";
 import IncidentStatusBadge from "@/components/IncidentStatusBadge";
+import React, { useState, useRef } from 'react';
+import { hashPassword } from '@/utils/miscUtils'
+
 
 function IncidentDetails() {
     const { selectedIncident } = useAppContext();
@@ -18,7 +21,34 @@ function IncidentDetails() {
 
 function IncidentDetailsContent() {
     const {currentIncidents, selectedIncident } = useAppContext();
+    const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
+    const [actionType, setActionType] = useState(null)
     const incident = currentIncidents.find(incident => incident.id === selectedIncident);
+    const passwordRef = useRef(null)
+    const passwordDialogRef= useRef(null)
+    const realHashedPassword = hashPassword("test")
+
+    const closePasswordDialog = (action)=>{
+        if(passwordDialogRef.current){ 
+            passwordDialogRef.current.close()
+            setPasswordDialogOpen(false)}
+    }
+    const openPasswordDialog = (action)=>{
+        setActionType(action)
+        if(passwordDialogRef.current) {
+            passwordDialogRef.current.showModal()
+            setPasswordDialogOpen(true)}
+    }
+    const submitPassword = (event) => {
+        event.preventDefault();
+        const enteredPassword = passwordRef.current.value
+        const enteredHashedPassword = hashPassword(enteredPassword)
+        if(enteredHashedPassword == realHashedPassword){
+
+            closePasswordDialog()
+        }
+        
+    }
 
     return (
         <>
@@ -26,11 +56,11 @@ function IncidentDetailsContent() {
                 <h3 className="text-primary text-lg">Details</h3>
 
                 <div className="flex items-center gap-2">
-                    <button className="btn btn-outline btn-sm">
+                    <button id = "modify" className="btn btn-outline btn-sm" onClick={() => openPasswordDialog("modify")}>
                         Update Status
                     </button>
 
-                    <button className="btn btn-outline btn-error btn-sm btn-square">
+                    <button id = "delete"className="btn btn-outline btn-error btn-sm btn-square" onClick={() => openPasswordDialog("delete")}>
                         {/*This icon is from Google Material Icons (https://fonts.google.com/icons) (delete)*/}
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
                     </button>
@@ -60,6 +90,21 @@ function IncidentDetailsContent() {
 
                 <IncidentDetailsImage pictureLink={incident.pictureLink}/>
             </div>
+            
+                <dialog ref = {passwordDialogRef} id="passwordDialog" className="modal">
+                <div className="modal-box">
+                  <h3 className="font-bold text-lg">Enter Your Password</h3>
+                  <div className="modal-action">
+                    <form onSubmit={submitPassword}>
+                      {/* if there is a button in form, it will close the modal */}
+                      <input ref = {passwordRef} type="password" placeholder="Enter Password" className="input w-full max-w-xs" required/>
+                      <button type = "submit" className="btn btn-primary">Submit</button>
+                      <button type  = "button" className="btn btn-secondary" onClick ={closePasswordDialog}>Close</button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
+            
         </>
     );
 }
