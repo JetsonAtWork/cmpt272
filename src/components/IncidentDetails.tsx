@@ -13,7 +13,7 @@ function IncidentDetails() {
     </>);
 
     return (
-        <section className="w-full card bg-base-300 shadow-xl h-72 p-4">
+        <section className="w-full card bg-base-300 shadow-xl h-80 p-4" id="details">
             {content}
         </section>
     );
@@ -29,7 +29,7 @@ function IncidentDetailsContent() {
     const passwordDialogRef= useRef(null)
     const realHashedPassword = "098f6bcd4621d373cade4e832627b4f6"//This is just "test" hashed
 
-    const closePasswordDialog = (action)=>{
+    const closePasswordDialog =()=>{
         if(passwordDialogRef.current){ 
             passwordDialogRef.current.close()
             setPasswordDialogOpen(false)}
@@ -65,11 +65,11 @@ function IncidentDetailsContent() {
                 <h3 className="text-primary text-lg">Details</h3>
 
                 <div className="flex items-center gap-2">
-                    <button id = "modify" className="btn btn-outline btn-sm" onClick={() => openPasswordDialog("modify")}>
+                    <button id = "modify" className="btn btn-neutral btn-sm" onClick={() => openPasswordDialog("modify")}>
                         Update Status
                     </button>
 
-                    <button id = "delete"className="btn btn-outline btn-error btn-sm btn-square" onClick={() => openPasswordDialog("delete")}>
+                    <button id = "delete"className="btn btn-outline btn-error btn-sm btn-square" onClick={() => openPasswordDialog("delete")} title="Delete Incident">
                         {/*This icon is from Google Material Icons (https://fonts.google.com/icons) (delete)*/}
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
                     </button>
@@ -77,7 +77,7 @@ function IncidentDetailsContent() {
             </div>
 
             <div className="grid grid-cols-[2fr_1fr] h-full">
-                <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+                <div className="grid grid-cols-[auto_1fr] grid-rows-[1fr_1fr_1.5fr_1fr_2fr] gap-x-4 gap-y-1">
                     <strong className="incident-details-label">Type</strong>
                     <p>{incident.emergencyDesc}</p>
 
@@ -130,20 +130,20 @@ function IncidentDetailsContent() {
     );
 }
 
-function IncidentDetailsImage({pictureLink}) {
+interface IncidentDetailsImageProps {
+    pictureLink: string,
+}
+
+function IncidentDetailsImage({ pictureLink }: IncidentDetailsImageProps) {
     if (pictureLink) {
         return (
-            <a href={pictureLink} target="_blank" className="relative group max-h-full w-full">
-                <svg
-                    className="absolute right-4 top-4 z-10 group-hover:scale-125 transition duration-200 ease-in-out"
-                    xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill="currentColor">
+            <a href={pictureLink} target="_blank" className="relative group h-[15.5rem] w-full">
+                {/*This icon is from Google Material Icons (https://fonts.google.com/icons) (open_in_full)*/}
+                <svg className="absolute right-4 top-4 z-10 group-hover:scale-125 transition duration-200 ease-in-out" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
                     <path d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z"/>
                 </svg>
-                <div
-                    className="w-full h-full absolute top-0 right-0 rounded-box group-hover:bg-base-200 opacity-40 transition duration-200 ease-in-out"/>
-                <img src={pictureLink} alt="Incident Report Image"
-                     className="w-full h-full max-h-full object-cover rounded-box"/>
+                <div className="w-full h-full absolute top-0 right-0 rounded-box group-hover:bg-base-200 opacity-40 transition duration-200 ease-in-out"/>
+                <img src={pictureLink} alt="Incident Report Image" className="w-full h-full object-cover rounded-box"/>
             </a>
         );
     } else {
