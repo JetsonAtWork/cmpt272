@@ -21,12 +21,12 @@ import {Incident} from "@/types";
  * https://www.npmjs.com/package/browser-image-compression
  * https://www.npmjs.com/package/sharp (this one is really good but quite a large package)
  * */ 
-function fileToBase64(file: Blob) {
+function fileToBase64(file: Blob): Promise<string>{
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event) => {
           if (event.target)
-              resolve(event.target.result);
+              resolve(event.target.result as string);
           else throw new Error('Failed to read file')
       };
       reader.readAsDataURL(file);
@@ -39,14 +39,8 @@ function hashPassword(password: string) {
 }
 
 function seedCurrentIncidents(): Incident[] {
-    const date1 = new Date();
-    date1.setMonth(2);
-
-    const date2 = new Date();
-    date2.setMonth(5);
-
     return [{
-        id: 1,
+        id: '1',
         date: new Date(),
         status: "open",
         emergencyDesc: "Fire",
@@ -58,8 +52,8 @@ function seedCurrentIncidents(): Incident[] {
         }
     },
     {
-        id: 2,
-        date: date1,
+        id: '2',
+        date: new Date(),
         status: "open",
         emergencyDesc: "Missing Person",
         pictureLink: "",
@@ -70,8 +64,8 @@ function seedCurrentIncidents(): Incident[] {
         }
     },
     {
-        id: 3,
-        date: date2,
+        id: '3',
+        date: new Date(),
         status: "resolved",
         emergencyDesc: "Car Accident",
         pictureLink: "",
@@ -82,9 +76,31 @@ function seedCurrentIncidents(): Incident[] {
         }
     }]
 }
-  
+
+function condStr(condition: boolean, str: string) {
+    return condition ? str : ''
+}
+
+function validatePhoneNumber(num: string) {
+    const validLengths = [10,11]
+    return validLengths.includes(num.length)
+}
+
+function curry(fn, ...params: any[]) {
+    const curried = (...other) => {
+        if (fn.length !== other.length) {
+            return curried.bind(null, ...other);
+        }
+        return fn(...other);
+    };
+    return curried(...params);
+};
+
   export {
     fileToBase64,
     hashPassword,
-    seedCurrentIncidents
+    seedCurrentIncidents,
+    condStr,
+    validatePhoneNumber,
+    curry
   }

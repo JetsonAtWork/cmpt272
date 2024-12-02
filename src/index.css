@@ -15,9 +15,42 @@
 
 body {
   min-height: 100vh;
+  overflow-y: scroll;
+}
+
+.custom-popup .leaflet-popup-content {
+  background-color: none !important;
+  border: none !important;
+  width: auto !important;
+  margin: 0px !important;
+}
+.custom-popup .leaflet-popup-content-wrapper {
+  width: auto !important;
+  background-color: none !important;
+  background: none;
+  box-shadow: none;
+}
+.custom-popup .leaflet-popup-close-button {
+  display: none;
+}
+
+.custom-popup .leaflet-popup-tip {
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-bg-opacity, 1)));
+  box-shadow: none;
+  transition: none;
+}
+
+/* Need to remove transition effect because react instantly removes conditionally rendered elements from the DOM */
+.leaflet-fade-anim .leaflet-popup {
+  transition: none;
 }
 
 .incident-details-label {
   color: oklch(var(--bc) / 0.6);
   @apply text-sm;
+}
+
+.special {
+  display: hidden;
 }
