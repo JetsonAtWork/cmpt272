@@ -25,7 +25,7 @@ const AppContext = createContext<Partial<Context>>(initialState);
 export const AppContextProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [currentIncidents, setCurrentIncidents] = useState<Incident[]>()
-    const [selectedIncident, setSelectedIncident] = useState<number | null>();
+    const [selectedIncident, setSelectedIncident] = useState<string | null>();
     const [visibleIncidents, setVisibleIncidents] = useState<Incident[]>();
     const [isMacOS, setIsMacOS] = useState(false);
 

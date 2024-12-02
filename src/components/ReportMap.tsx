@@ -18,8 +18,7 @@ const ReportMap = ({
   newIncidentPosition,
   setNewIncidentPosition
 }: ReportMapProps) => {
-  const [markers, setMarkers] = useState([]); // All markers
-  const [visibleMarkers, setVisibleMarkers] = useState([]); // Markers currently visible in the map bounds
+  const [markers, setMarkers] = useState([]); // All markers, TODO: I noticed this is no longer really used. We can probably remove it.
   const [address, setAddress] = useState('');
   const [map, setMap] = useState<Map>()
   const inputRef = useRef<HTMLInputElement>()
@@ -28,6 +27,7 @@ const ReportMap = ({
     isMacOS,
     selectedIncident,
     currentIncidents,
+    setVisibleIncidents,
     loading,
     setSelectedIncident
    } = useAppContext()
@@ -63,10 +63,10 @@ const ReportMap = ({
       moveend: () => {
         if (map) {
           const bounds = map.getBounds(); // Get current map bounds
-          const visible = markers.filter((marker) =>
-            bounds.contains([marker.lat, marker.lon])
+          const visible = currentIncidents.filter((incident) =>
+            bounds.contains(incident.location.latlng)
           ); // Filter markers within bounds
-          setVisibleMarkers(visible);
+          setVisibleIncidents(visible);
         } else {console.log('no map')}
       },
       click: handleMapClicked
@@ -80,12 +80,12 @@ const ReportMap = ({
   useEffect(() => {
     if (map) {
       const bounds = map.getBounds();
-      const visible = markers.filter((marker) =>
-        bounds.contains([marker.lat, marker.lon])
+      const visible = currentIncidents.filter((incident) =>
+        bounds.contains(incident.location.latlng)
       );
-      setVisibleMarkers(visible);
+      setVisibleIncidents(visible);
     }
-  }, [markers]);
+  }, [currentIncidents]);
 
   useEffect(() => {
     if (!loading && map) {
