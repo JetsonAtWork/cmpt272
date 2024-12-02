@@ -7,7 +7,10 @@ function loadIncidentsFromLocalStorage() : Incident[] {
         const getAllIncidents = localStorage.getItem("incidents");
         if(getAllIncidents){
             const getAllIncidentsString = JSON.parse(getAllIncidents) as Incident[]
-            return getAllIncidentsString
+            return getAllIncidentsString.map((incident) => ({
+                ...incident,
+                date: new Date(incident.date)
+            }))
         }
         return []
     } catch (error) {
