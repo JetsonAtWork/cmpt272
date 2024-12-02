@@ -23,10 +23,11 @@ function IncidentDetailsContent() {
     const {currentIncidents, selectedIncident } = useAppContext();
     const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
     const [actionType, setActionType] = useState(null)
+    const [passwordError, setPasswordError] = useState("")
     const incident = currentIncidents.find(incident => incident.id === selectedIncident);
     const passwordRef = useRef(null)
     const passwordDialogRef= useRef(null)
-    const realHashedPassword = hashPassword("test")
+    const realHashedPassword = "098f6bcd4621d373cade4e832627b4f6"//This is just "test" hashed
 
     const closePasswordDialog = (action)=>{
         if(passwordDialogRef.current){ 
@@ -44,8 +45,16 @@ function IncidentDetailsContent() {
         const enteredPassword = passwordRef.current.value
         const enteredHashedPassword = hashPassword(enteredPassword)
         if(enteredHashedPassword == realHashedPassword){
-
+            if(actionType == "modify"){
+                //Modify the Incident
+            }
+            if(actionType == "delete"){
+                //delete the Incident
+            }
             closePasswordDialog()
+        }
+        else{
+            setPasswordError("Incorrect Password.")
         }
         
     }
@@ -91,19 +100,31 @@ function IncidentDetailsContent() {
                 <IncidentDetailsImage pictureLink={incident.pictureLink}/>
             </div>
             
-                <dialog ref = {passwordDialogRef} id="passwordDialog" className="modal">
+            <dialog ref = {passwordDialogRef} id="passwordDialog" className="modal">
                 <div className="modal-box">
                   <h3 className="font-bold text-lg">Enter Your Password</h3>
                   <div className="modal-action">
-                    <form onSubmit={submitPassword}>
+                    <form onSubmit={submitPassword} className="flex flex-col space-y-4">
                       {/* if there is a button in form, it will close the modal */}
-                      <input ref = {passwordRef} type="password" placeholder="Enter Password" className="input w-full max-w-xs" required/>
-                      <button type = "submit" className="btn btn-primary">Submit</button>
-                      <button type  = "button" className="btn btn-secondary" onClick ={closePasswordDialog}>Close</button>
+                        <input ref = {passwordRef} type="password" placeholder="Enter Password" className="input w-full max-w-xs" required/>
+                    
+                        <div className="flex gap-4 mt-4">
+                            <button type="submit" className="btn btn-primary">
+                                Submit
+                            </button>
+                            <button type="button"className="btn btn-secondary"onClick={closePasswordDialog}>
+                                Close
+                            </button>
+                        </div>
                     </form>
                   </div>
+                  {passwordError &&(
+                    <div className="text-error mt-2">
+                    <p>{passwordError}</p>
                 </div>
-              </dialog>
+                  )}
+                </div>
+            </dialog>
             
         </>
     );
