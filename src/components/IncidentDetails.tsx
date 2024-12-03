@@ -49,7 +49,9 @@ function IncidentDetailsContent() {
             if(actionType == "modify"){
                 //Modify the Incident
                 resolveIncident(incident.id)
-                if(incident.status == "")
+                if(incident.status === "open"){
+                    resolveIncident(incident.id)
+                }
             }
             if(actionType == "delete"){
                 //delete the Incident
