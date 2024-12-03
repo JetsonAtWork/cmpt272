@@ -2,6 +2,7 @@ import useAppContext from "@/hooks/useAppContext";
 import IncidentStatusBadge from "@/components/IncidentStatusBadge";
 import React, { useState, useRef } from 'react';
 import { hashPassword } from '@/utils/miscUtils'
+import config from "@/config";
 
 
 
@@ -28,7 +29,6 @@ function IncidentDetailsContent() {
     const incident = currentIncidents.find(incident => incident.id === selectedIncident);
     const passwordRef = useRef(null)
     const passwordDialogRef= useRef(null)
-    const realHashedPassword = hashPassword("test")//This is just "test" hashed
 
     const closePasswordDialog =()=>{
         if(passwordDialogRef.current){ 
@@ -45,10 +45,11 @@ function IncidentDetailsContent() {
         event.preventDefault();
         const enteredPassword = passwordRef.current.value
         const enteredHashedPassword = hashPassword(enteredPassword)
-        if(enteredHashedPassword == realHashedPassword){
+        if(enteredHashedPassword == config.password){
             if(actionType == "modify"){
                 //Modify the Incident
                 resolveIncident(incident.id)
+                if(incident.status == "")
             }
             if(actionType == "delete"){
                 //delete the Incident
