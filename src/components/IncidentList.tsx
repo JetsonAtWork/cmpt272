@@ -3,6 +3,7 @@ import IncidentStatusBadge from "@/components/IncidentStatusBadge";
 import {useEffect, useMemo, useState} from "react";
 import Fuse from "fuse.js";
 import {Incident} from "@/types";
+import {DATE_FORMAT} from "@/utils/miscUtils.ts";
 
 interface SortState {
     column: string,
@@ -130,7 +131,7 @@ function IncidentListTable({ incidents, selectedIncident, setSelectedIncident, s
                         <tr key={incident.id.toString()} className={`!border-b-neutral ${selectedIncident === incident.id ? "bg-primary bg-opacity-30" : "hover cursor-pointer"}`} onClick={() => setSelectedIncident(incident.id)}>
                             <td>{incident.emergencyDesc}</td>
                             <td>{incident.location.name ?? incident.location.address}</td>
-                            <td>{incident.date.toString()}</td>
+                            <td>{DATE_FORMAT.format(incident.date)}</td>
                             <td><IncidentStatusBadge status={incident.status}/></td>
                         </tr>
                     )

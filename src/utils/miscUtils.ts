@@ -96,11 +96,21 @@ function curry(fn, ...params: any[]) {
     return curried(...params);
 };
 
+const DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
+    day: "2-digit",
+    month: "numeric",
+    year: "2-digit",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true
+});
+
   export {
     fileToBase64,
     hashPassword,
     seedCurrentIncidents,
     condStr,
     validatePhoneNumber,
-    curry
+    curry,
+    DATE_FORMAT
   }
