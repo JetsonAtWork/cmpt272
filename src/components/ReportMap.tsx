@@ -18,7 +18,6 @@ const ReportMap = ({
   newIncidentPosition,
   setNewIncidentPosition
 }: ReportMapProps) => {
-  const [markers, setMarkers] = useState([]); // All markers, TODO: I noticed this is no longer really used. We can probably remove it.
   const [address, setAddress] = useState('');
   const [map, setMap] = useState<Map>()
   const inputRef = useRef<HTMLInputElement>()
@@ -54,15 +53,16 @@ const ReportMap = ({
     }
   };
 
-  const handleDeleteMarker = (indexToRemove) => {
-    setMarkers((prevMarkers) => prevMarkers.filter((_, index) => index !== indexToRemove)); // Remove marker from the list
-  };
+  const getBounds = () => {
+    const bounds = map.getBounds();
+    return bounds.extend([bounds.getSouth() - (0.035 * (bounds.getNorth() - bounds.getSouth())), bounds.getEast()]);
+  }
 
   const MapEvents = () => {
     useMapEvents({
       moveend: () => {
         if (map) {
-          const bounds = map.getBounds(); // Get current map bounds
+          const bounds = getBounds(); // Get current map bounds
           const visible = currentIncidents.filter((incident) =>
             bounds.contains(incident.location.latlng)
           ); // Filter markers within bounds
@@ -79,7 +79,7 @@ const ReportMap = ({
 // It checks current map bounds using the map reference and filters markers that are within those bounds, then updates visibleMarkers state.
   useEffect(() => {
     if (map) {
-      const bounds = map.getBounds();
+      const bounds = getBounds(); // Get current map bounds
       const visible = currentIncidents.filter((incident) =>
         bounds.contains(incident.location.latlng)
       );
