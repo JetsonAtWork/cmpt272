@@ -9,33 +9,15 @@ import { beginIncidentCreationFn, Incident, mapPosition } from '@/types';
 import { curry, getMapIcon } from '@/utils/miscUtils';
 
 const ReportMap = () => {
-  const [address, setAddress] = useState('');
   const [map, setMap] = useState<Map>()
   const inputRef = useRef<HTMLInputElement>()
   const { 
-    isMacOS,
     selectedIncident,
     currentIncidents,
     setVisibleIncidents,
     loading,
     setSelectedIncident
    } = useAppContext()
-  
-  const handleSearch = async () => {
-    try {
-      const results = await searchForLocation({ query: address });
-      if (results.length > 0) {
-        const { lat, lon, display_name } = results[0]; // Extract name and coordinates
-      } else {
-        alert('Address not found');
-      }
-    } catch (error) {
-      console.error('Error searching for location:', error);
-      alert('There was an error searching for the location.');
-    } finally {
-      setAddress(''); // Clear the address bar after clicking send report button
-    }
-  };
 
   const getBounds = () => {
     const bounds = map.getBounds();
@@ -105,11 +87,6 @@ const ReportMap = () => {
     )
   }
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    handleSearch()
-  }
-
   function handleMapReady(mapCreationEvent) {
     const newMap = mapCreationEvent.target
     setMap(newMap)
@@ -117,32 +94,6 @@ const ReportMap = () => {
 
   return (
     <div className='h-full rounded-2xl flex flex-col overflow-hidden relative'>
-      {/* Bar to enter address */}
-      <form onSubmit={handleSubmit} className="search-bar join flex absolute top-2 left-2 z-[500]">
-        <label className='input input-bordered flex items-center !rounded-r-none' htmlFor="search">
-          <input
-            id='search'
-            ref={inputRef}
-            type="text"
-            placeholder="Search Address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="join-item max-w-xs !text-sm !w-64 bg-white !rounded-r-none"
-          />
-          <kbd className='kbd kbd-sm opacity-80 mr-1'>
-            { isMacOS 
-              ? '⌘' 
-              : <CtrlIcon className='w-4 h-4'/> 
-            }
-          </kbd>
-          <kbd className='kbd kbd-sm opacity-80'>
-            k
-          </kbd>
-        </label>
-        <button onClick={handleSearch} className="join-item btn !py-2 !px-2 btn-primary !rounded-l-none">
-          <SearchIcon className='w-8 h-8'/>
-        </button>
-      </form>
       {/* Map */}
       <MapContainer
         whenReady={handleMapReady}

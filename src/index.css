@@ -54,3 +54,6 @@ body {
 .special {
   display: hidden;
 }
+.modal {
+  z-index: 1005;
+}
