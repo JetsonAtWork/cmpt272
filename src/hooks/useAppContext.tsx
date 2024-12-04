@@ -7,6 +7,7 @@ type Context = {
     currentIncidents: Incident[] | undefined;
     addIncident: (newIncident: Incident) => void;
     resolveIncident: (incidentIDToResolve: string) => void;
+    reopenIncident: (incidentIDToResolve: string) => void;
     visibleIncidents: Incident[] | undefined;
     setVisibleIncidents: (newVisibleIncidents: Incident[]) => void;
     deleteIncident: (incidentIDToDelete: string) => void;
@@ -66,6 +67,23 @@ export const AppContextProvider = ({children}) => {
                 : incident
         );
     }
+    function reopenIncident(incidentIDToResolve: string) {
+        // 1 modify incident in app state
+        const newIncidentArray: Incident[] = currentIncidents.map((incident) =>
+            incident.id === incidentIDToResolve
+                ? { ...incident, status: "open" }
+                : incident
+        );
+        setCurrentIncidents(newIncidentArray);
+        // 2 write modified incident to localstorage
+        const previousList = loadIncidentsFromLocalStorage();
+        const newList = previousList.map((incident) =>
+            incident.id === incidentIDToResolve
+                ? { ...incident, status: "open" }
+                : incident
+        );
+    }
+
     function deleteIncident(incidentIDToDelete: string) {
         // 1 delete incident in app state
         setCurrentIncidents((prev)=>
@@ -88,6 +106,7 @@ export const AppContextProvider = ({children}) => {
         setVisibleIncidents,
         addIncident,
         resolveIncident,
+        reopenIncident,
         deleteIncident,
         isMacOS,
         loading: currentIncidents == null
