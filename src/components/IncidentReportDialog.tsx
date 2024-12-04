@@ -70,12 +70,16 @@ export const IncidentReportDialog = ({
             status: "open",
             location: {
                 ...formValues.location,
-                latlng: new LatLng(
-                    incidentPosition?.lat || incidentPosition.lat,
-                    incidentPosition?.lon || incidentPosition.lon
-                ),
             },
         };
+
+        if (incidentDetails) {
+          finalValues.location.latlng = 
+            new LatLng(
+              incidentPosition?.lat || incidentPosition.lat,
+              incidentPosition?.lon || incidentPosition.lon
+          )
+        }
         if (incidentDetails) modifyIncident(finalValues);
         else addIncident(finalValues);
         setSelectedIncident(finalValues.id);
