@@ -206,6 +206,7 @@ export const IncidentReportDialog = ({
                     }[formStep]
                 }
             </div>
+            <div onClick={closeDialog} className="modal-backdrop bg-black opacity-70"/>
         </dialog>
     );
 };
