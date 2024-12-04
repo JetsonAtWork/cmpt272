@@ -18,8 +18,11 @@ export default {
         }
       },
       "night"
-    ]
+    ],
+    safelist: ['fill-primary']
   },
+
+  safelist: ['fill-primary'],
   content: ["./src/**/*.{js,ts,jsx,tsx}","./index.html"],
   theme: {
     extend: {},
