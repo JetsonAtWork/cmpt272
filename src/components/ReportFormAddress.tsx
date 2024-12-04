@@ -104,7 +104,7 @@ const AddressInput = ({ onAddressChange, addressChangeWarning, initialAddress, e
   return (
     <>
       <div className="label">
-        <span className="label-text">Address</span>
+        <span className="label-text">Address or Coordinates</span>
           { error && (
               <span className="label-text-alt !text-error">{error}</span>
           )}
@@ -115,7 +115,7 @@ const AddressInput = ({ onAddressChange, addressChangeWarning, initialAddress, e
             onBlur={onBlur}
             id='search'
             type="text"
-            placeholder="Search Address"
+            placeholder="Search Address or Coordinates"
             value={addressText}
             onChange={(e) => setAddressText(e.target.value)}
             className={`join-item w-full !text-sm bg-white !rounded-r-none`}

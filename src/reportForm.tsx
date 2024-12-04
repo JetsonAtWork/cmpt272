@@ -97,14 +97,4 @@ return (
 );
 };
 
-
-export const SubmitReportFormActions = ({ onSubmitClicked, onCancelClicked}) => (
-    <div className="modal-action">
-        <form method='dialog' className="flex w-full justify-end gap-2">
-            <button onClick={onSubmitClicked} type="button" className="btn btn-primary bg-neutral">Submit Report</button>
-            <button onClick={onCancelClicked} type='reset' className='btn btn-neutral'>Cancel</button>
-        </form>
-    </div>
-)
-
 export default SubmitReportForm;

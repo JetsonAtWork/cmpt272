@@ -4,7 +4,7 @@ import {
     ReportFormAddressActions,
 } from "@/components/ReportFormAddress";
 import useAppContext from "@/hooks/useAppContext";
-import SubmitReportForm, { SubmitReportFormActions } from "@/reportForm";
+import SubmitReportForm from "@/reportForm";
 import { Incident, mapPosition } from "@/types";
 import { validatePhoneNumber } from "@/utils/miscUtils";
 import { LatLng, latLng } from "leaflet";
@@ -156,9 +156,9 @@ export const IncidentReportDialog = ({
     }
     return (
         <dialog id={dialogID} className="modal" open={isOpen}>
-            <div className="modal-box flex flex-col h-[40rem] !max-h-none">
+            <div className="modal-box flex flex-col h-[45rem] !max-h-none">
                 <div className="flex flex-col w-full items-center">
-                    <h3 className="font-bold text-lg">Witness Report Form</h3>
+                    <h3 className="font-bold text-lg">Incident Report Form</h3>
                     <DialogStepper
                         onStepClicked={changeStep}
                         currentStep={formStep}
@@ -197,10 +197,15 @@ export const IncidentReportDialog = ({
                                     addressConfirmed={addressConfirmed}
                                     setAddressConfirmed={setAddressConfirmed}
                                 />
-                                <SubmitReportFormActions
-                                    onCancelClicked={closeDialog}
-                                    onSubmitClicked={validateForm}
-                                />
+
+                                <div className="modal-action">
+                                    <form method='dialog' className="flex w-full justify-end gap-2">
+                                        <button onClick={validateForm} type="button" className="btn btn-primary bg-neutral">
+                                            {incidentDetails ? "Apply Changes" : "Submit Report"}
+                                        </button>
+                                        <button onClick={closeDialog} type='reset' className='btn btn-neutral'>Cancel</button>
+                                    </form>
+                                </div>
                             </>
                         ),
                     }[formStep]

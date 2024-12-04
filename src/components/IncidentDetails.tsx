@@ -104,7 +104,7 @@ function IncidentDetailsContent() {
             </div>
 
             <div className="grid grid-cols-[2fr_1fr] h-full">
-                <div className="grid grid-cols-[auto_1fr] grid-rows-[1fr_1fr_1fr_1fr_1.5fr_1fr_2fr] gap-x-4 gap-y-1">
+                <div className="grid grid-cols-[auto_1fr] grid-rows-[1fr_1fr_1fr_1fr_1fr_1fr_2.5fr] gap-x-4 gap-y-1">
                     <strong className="incident-details-label">Type</strong>
                     <p>{incident.emergencyDesc}</p>
 
@@ -118,10 +118,7 @@ function IncidentDetailsContent() {
                     <p>{incident.person.phoneNumber}</p>
 
                     <strong className="incident-details-label">Location</strong>
-                    <div>
-                        <p>{incident.location.name}</p>
-                        <p>{incident.location.address}</p>
-                    </div>
+                    <p>{incident.location.address}</p>
 
                     <strong className="incident-details-label">Time Reported</strong>
                     <p>{DATE_FORMAT.format(incident.date)}</p>
