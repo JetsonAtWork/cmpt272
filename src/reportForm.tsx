@@ -1,6 +1,6 @@
 import React from "react";
 import { Incident, formSection } from "./types";
-import { condStr, fileToBase64 } from './utils/miscUtils';
+import { condStr, DATE_FORMAT, fileToBase64 } from './utils/miscUtils';
 
 type SubmitReportFormProps = {
     initialValues?: Incident,
@@ -92,7 +92,7 @@ return (
             <div className="label !pb-1">
                 <label className="label-text">Date and Time of incident</label>
             </div>
-            <input className = "input input-sm input-bordered !bg-base-300 w-full mb-2" type = "text" id="timeanddate" name = "timeanddate" value = {values.date.toLocaleString()} disabled></input>
+            <input className = "input input-sm input-bordered !bg-base-300 w-full mb-2" type = "text" id="timeanddate" name = "timeanddate" value = {DATE_FORMAT.format(values.date)} disabled></input>
     </form>
 );
 };

@@ -99,6 +99,14 @@ function curry(fn, ...params: any[]) {
     return curried(...params);
 };
 
+const DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true
+});
 function rangeArray(start, end) {
     if (start > end) return [];
     if (Number.isNaN(start) || Number.isNaN(end)) return [];
@@ -137,6 +145,7 @@ function getMapIcon(svgClassName: string) {
     condStr,
     validatePhoneNumber,
     curry,
+    DATE_FORMAT,
     rangeArray,
     latLngsEqual,
     getMapIcon,

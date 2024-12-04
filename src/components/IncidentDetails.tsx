@@ -1,11 +1,9 @@
 import useAppContext from "@/hooks/useAppContext";
 import IncidentStatusBadge from "@/components/IncidentStatusBadge";
 import React, { useState, useRef } from 'react';
-import { hashPassword } from '@/utils/miscUtils'
+import {DATE_FORMAT, hashPassword} from '@/utils/miscUtils'
+import { IncidentReportDialog } from "@/components/IncidentReportDialog";
 import config from "@/config";
-import { IncidentReportDialog } from '@/components/IncidentReportDialog'
-import {submitEmergencyFormFn, mapPosition } from '@/types'
-
 
 function IncidentDetails() {
     const { selectedIncident } = useAppContext();
@@ -16,7 +14,7 @@ function IncidentDetails() {
     </>);
 
     return (
-        <section className="w-full card bg-base-300 shadow-xl h-80 p-4" id="details">
+        <section className="w-full card bg-base-300 shadow-xl h-96 p-4" id="details">
             {content}
         </section>
     );
@@ -106,12 +104,18 @@ function IncidentDetailsContent() {
             </div>
 
             <div className="grid grid-cols-[2fr_1fr] h-full">
-                <div className="grid grid-cols-[auto_1fr] grid-rows-[1fr_1fr_1.5fr_1fr_2fr] gap-x-4 gap-y-1">
-                <strong className="incident-details-label">Type</strong>
+                <div className="grid grid-cols-[auto_1fr] grid-rows-[1fr_1fr_1fr_1fr_1.5fr_1fr_2fr] gap-x-4 gap-y-1">
+                    <strong className="incident-details-label">Type</strong>
                     <p>{incident.emergencyDesc}</p>
 
                     <strong className="incident-details-label">Status</strong>
                     <IncidentStatusBadge status={incident.status}/>
+
+                    <strong className="incident-details-label">Witness Name</strong>
+                    <p>{incident.person.name}</p>
+
+                    <strong className="incident-details-label">Witness Phone Number</strong>
+                    <p>{incident.person.phoneNumber}</p>
 
                     <strong className="incident-details-label">Location</strong>
                     <div>
@@ -120,7 +124,7 @@ function IncidentDetailsContent() {
                     </div>
 
                     <strong className="incident-details-label">Time Reported</strong>
-                    <p>{incident.date.toDateString()}</p>
+                    <p>{DATE_FORMAT.format(incident.date)}</p>
 
                     <strong className="incident-details-label">Comments</strong>
                     <p>{incident.comments}</p>
@@ -128,9 +132,8 @@ function IncidentDetailsContent() {
 
                 <IncidentDetailsImage pictureLink={incident.pictureLink}/>
             </div>
-            
-            <dialog ref = {passwordDialogRef} id="passwordDialog" className="modal">
-                <div className="modal-box !justify-center">
+            <dialog ref={passwordDialogRef} id="passwordDialog" className="modal">
+                <div className="modal-box">
                   <h3 className="font-bold text-lg">Enter Your Password</h3>
                   <div className="modal-action">
                     <form onSubmit={submitPassword} className="flex flex-col space-y-4 w-full items-center">
@@ -174,7 +177,7 @@ interface IncidentDetailsImageProps {
 function IncidentDetailsImage({ pictureLink }: IncidentDetailsImageProps) {
     if (pictureLink) {
         return (
-            <a href={pictureLink} target="_blank" className="relative group h-[15.5rem] w-full">
+            <a href={pictureLink} target="_blank" className="relative group h-[19.5rem] w-full">
                 {/*This icon is from Google Material Icons (https://fonts.google.com/icons) (open_in_full)*/}
                 <svg className="absolute right-4 top-4 z-10 group-hover:scale-125 transition duration-200 ease-in-out" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
                     <path d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z"/>
