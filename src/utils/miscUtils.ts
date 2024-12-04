@@ -98,8 +98,8 @@ function curry(fn, ...params: any[]) {
 
 const DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
     day: "2-digit",
-    month: "numeric",
-    year: "2-digit",
+    month: "short",
+    year: "numeric",
     hour: "numeric",
     minute: "numeric",
     hour12: true
