@@ -14,23 +14,7 @@ type IncidentReportDialogProps = {
     isOpen: boolean,
     setIsOpen: (isOpen: boolean) => void,
 }
-const initialFormValues: Incident = {
-    id: "",
-    date: new Date(),
-    status: "open",
-    person: {
-        name:"",
-        phoneNumber:"",
-    },
-    emergencyDesc: "",
-    location: {
-        address: "",
-        latlng: latLng(0, 0),
-        radiusMeters:0,
-    },
-    pictureLink: "",
-    comments: "",
-}
+
 export const IncidentReportDialog = ({
     dialogID,
     formID,
@@ -40,10 +24,30 @@ export const IncidentReportDialog = ({
     setIsOpen,
 }: IncidentReportDialogProps) => {
     const [formErrors, setFormErrors] = useState({})
-    const [formValues, setFormValues] = useState<Incident>(initialFormValues);
+    const [formValues, setFormValues] = useState<Incident>(initialFormValues());
 
     const { addIncident, setSelectedIncident, modifyIncident} = useAppContext()
-    
+
+    function initialFormValues(): Incident {
+        return {
+            id: "",
+            date: new Date(),
+            status: "open",
+            person: {
+                name:"",
+                phoneNumber:"",
+            },
+            emergencyDesc: "",
+            location: {
+                address: "",
+                latlng: latLng(0, 0),
+                radiusMeters:0,
+            },
+            pictureLink: "",
+            comments: "",
+        }
+    }
+
     function prepareFormSubmit() {
         //first create and add uuid 
         const newUuid = uuidv4();
@@ -88,17 +92,17 @@ export const IncidentReportDialog = ({
 
     function closeDialog() {
         setIsOpen(false);
-        setFormValues(initialFormValues)
-        setFormErrors({})
-    }
-
-    function openExistingIncident() {
-        setFormValues(incidentDetails);
+        setFormValues(initialFormValues);
+        setFormErrors({});
     }
 
     React.useEffect(() => {
+        setFormErrors({});
+
         if (incidentDetails) {
-            openExistingIncident();
+            setFormValues(incidentDetails);
+        } else {
+            setFormValues(initialFormValues());
         }
     }, [isOpen]);
 
