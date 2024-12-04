@@ -31,8 +31,8 @@ function IncidentDetailsContent() {
     const passwordRef = useRef(null)
     const passwordDialogRef= useRef(null)
 
-    const handleIncidentFormSubmission: submitEmergencyFormFn = (submission) => {
-
+    const handleIncidentFormSubmission = (submission) => {
+        deleteIncident(incident.id)
     }
     function handleIncidentFormCancelled() {
   
@@ -41,7 +41,12 @@ function IncidentDetailsContent() {
     const closePasswordDialog =()=>{
         if(passwordDialogRef.current){ 
             passwordDialogRef.current.close()
-            setPasswordDialogOpen(false)}
+            setPasswordDialogOpen(false)
+        }
+        setPasswordError("")
+        if (passwordRef.current) {
+            passwordRef.current.value = '';
+        }
     }
     const openPasswordDialog = (action)=>{
         setActionType(action)
@@ -56,7 +61,6 @@ function IncidentDetailsContent() {
         if(enteredHashedPassword == config.password){
             if(actionType == "modifyStatus"){
                 //Modify the Incident
-                resolveIncident(incident.id)
                 if(incident.status === "open"){
                     resolveIncident(incident.id)
                 }
@@ -75,7 +79,6 @@ function IncidentDetailsContent() {
                 if(incidentDialog){
                     incidentDialog.showModal()
                 }
-                //deleteIncident(incident.id)
             }
             closePasswordDialog()
         }
@@ -130,14 +133,14 @@ function IncidentDetailsContent() {
             </div>
             
             <dialog ref = {passwordDialogRef} id="passwordDialog" className="modal">
-                <div className="modal-box">
+                <div className="modal-box !justify-center">
                   <h3 className="font-bold text-lg">Enter Your Password</h3>
                   <div className="modal-action">
-                    <form onSubmit={submitPassword} className="flex flex-col space-y-4">
+                    <form onSubmit={submitPassword} className="flex flex-col space-y-4 w-full">
                       {/* if there is a button in form, it will close the modal */}
-                        <input ref = {passwordRef} type="password" placeholder="Enter Password" className="input w-full max-w-xs" required/>
+                        <input ref = {passwordRef} type="password" placeholder="Enter Password" className="input input-bordered w-full self-center" required/>
                     
-                        <div className="flex gap-4 mt-4">
+                        <div className="flex gap-4 mt-4 self-end">
                             <button type="submit" className="btn btn-primary">
                                 Submit
                             </button>

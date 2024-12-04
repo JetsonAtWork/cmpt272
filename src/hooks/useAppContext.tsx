@@ -14,6 +14,7 @@ type Context = {
     isMacOS: boolean;
     selectedIncident: string;
     setSelectedIncident: (incidentID: string) => void;
+    modifyIncident: (newIncident: Incident) => void;
 };
 const initialState: Partial<Context> = {
     loading: true,
@@ -66,6 +67,7 @@ export const AppContextProvider = ({children}) => {
                 ? { ...incident, status: "resolved" }
                 : incident
         );
+        localStorage.setItem("incidents", JSON.stringify(newList));
     }
     function reopenIncident(incidentIDToResolve: string) {
         // 1 modify incident in app state
@@ -82,6 +84,40 @@ export const AppContextProvider = ({children}) => {
                 ? { ...incident, status: "open" }
                 : incident
         );
+        localStorage.setItem("incidents", JSON.stringify(newList));
+    }
+    function modifyIncident(newIncident: Incident) {
+        // 1 modify incident in app state 
+        const newIncidentArray: Incident[] = currentIncidents.map((incident) =>
+            incident.id === newIncident.id
+                ? {emergencyDesc: newIncident.emergencyDesc,
+                    location: newIncident.location,
+                    pictureLink: newIncident.pictureLink,
+                    comments: newIncident.comments,
+                    id: newIncident.id,
+                    date: incident.date,
+                    status: incident.status,
+                    person: newIncident.person,
+                }
+                : incident
+        );
+        setCurrentIncidents(newIncidentArray);
+        // 2 write modified incident to localstorage
+        const previousList = loadIncidentsFromLocalStorage();
+        const newList = previousList.map((incident) =>
+            incident.id === newIncident.id
+                ? {emergencyDesc: newIncident.emergencyDesc,
+                    location: newIncident.location,
+                    pictureLink: newIncident.pictureLink,
+                    comments: newIncident.comments,
+                    id: newIncident.id,
+                    date: incident.date,
+                    status: incident.status,
+                    person: newIncident.person,
+                }
+                : incident
+        );
+        localStorage.setItem("incidents", JSON.stringify(newList));
     }
 
     function deleteIncident(incidentIDToDelete: string) {
@@ -108,8 +144,9 @@ export const AppContextProvider = ({children}) => {
         resolveIncident,
         reopenIncident,
         deleteIncident,
+        modifyIncident,
         isMacOS,
-        loading: currentIncidents == null
+        loading: currentIncidents == null,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

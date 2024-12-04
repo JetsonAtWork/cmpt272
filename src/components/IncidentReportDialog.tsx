@@ -42,21 +42,22 @@ export const IncidentReportDialog = ({
     const [formErrors, setFormErrors] = useState({})
     const [formValues, setFormValues] = useState<Incident>(initialFormValues);
 
-    const { addIncident, setSelectedIncident } = useAppContext()
+    const { addIncident, setSelectedIncident, modifyIncident} = useAppContext()
     
     function prepareFormSubmit() {
         //first create and add uuid 
         const newUuid = uuidv4();
         const finalValues: Incident = {
             ...formValues,
-            id:newUuid,
+            id: incidentDetails?.id||newUuid,
             status: 'open',
             location: {
                 ...formValues.location,
                 latlng: new LatLng(incidentPosition?.lat||incidentPosition.lat, incidentPosition?.lon||incidentPosition.lon)
             }
         };
-        addIncident(finalValues)
+        if(incidentDetails) modifyIncident(finalValues)
+        else addIncident(finalValues)
         setSelectedIncident(finalValues.id)
         closeDialog()
     }
