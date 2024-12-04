@@ -3,7 +3,7 @@ import IncidentStatusBadge from "@/components/IncidentStatusBadge";
 import {useEffect, useMemo, useState} from "react";
 import Fuse from "fuse.js";
 import {Incident} from "@/types";
-import {DATE_FORMAT} from "@/utils/miscUtils.ts";
+import { DATE_FORMAT } from "@/utils/miscUtils";
 
 interface SortState {
     column: string,

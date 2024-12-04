@@ -1,25 +1,23 @@
-import { useState } from 'react';
-import { IncidentLocation, Witness, EmergencyReportFormData, Incident, formSection } from "./types";
 import React from "react";
-import {condStr, DATE_FORMAT, fileToBase64} from './utils/miscUtils';
-import { loadIncidentsFromLocalStorage } from './utils/localStorageUtils';
-import useAppContext from "@/hooks/useAppContext"; 
-import { AppContextProvider } from './hooks/useAppContext'; 
-import { v4 as uuidv4 } from 'uuid';
-import { latLng } from 'leaflet';
+import { Incident, formSection } from "./types";
+import { condStr, DATE_FORMAT, fileToBase64 } from './utils/miscUtils';
 
 type SubmitReportFormProps = {
     initialValues?: Incident,
     id: string,
     values: any,
     setValues: any,
-    errors: any
+    errors: any,
+    addressConfirmed: boolean,
+    setAddressConfirmed: React.Dispatch<React.SetStateAction<boolean>>
 }
 const SubmitReportForm = ({
     id,
     values,
     setValues,
-    errors
+    errors,
+    addressConfirmed,
+    setAddressConfirmed
 }: SubmitReportFormProps) => {
 
 const formUpdated = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, element: formSection, value: string) => {
@@ -57,6 +55,7 @@ const fileUploaded = async (event: React.ChangeEvent<HTMLInputElement>) => {
     }
 };
 
+
 return (
     //return form
     <form id={id} className ="max-w-800px mx-auto">
@@ -82,19 +81,12 @@ return (
             </div>
             <input className = {`input input-sm input-bordered !bg-base-300 w-full mb-2 ${condStr(errors.emergencyDesc, '!input-error')}`} type = "text" id="emergencyDesc" name = "emergencyDesc" value = {values.emergencyDesc} onChange={(e) => formUpdatednotEnclosved(e, "emergencyDesc", "emergencyDesc")}></input>
             <div className="label !pb-1">
-                <label className="label-text">Address of Incident*</label>
-                { errors.address && (
-                    <label className="label-text-alt !text-error">{errors.address}</label>
-                )}
-            </div>
-            <input className = {`input input-sm input-bordered !bg-base-300 w-full mb-2 ${condStr(errors.address, '!input-error')}`} type = "text" id="locationAddress" name = "address" value = {values.location.address} onChange={(e) => formUpdated(e, "location", "address")}></input>
-            <div className="label !pb-1">
                 <label className="label-text">If you have a photo, please upload</label>
             </div>
             <input className = "file-input file-input-sm file-input-bordered !bg-base-300 w-full file-input-primary mb-2" type = "file" id="pictureLink" name = "pictureLink" onChange={fileUploaded}></input>
 
             <div className="label">
-                <label className="label-text">Any additional comments*</label>
+                <label className="label-text">Any additional comments</label>
             </div>
             <textarea className = "textarea textarea-bordered !bg-base-300 w-full   mb-2" id="comments" name = "comments" value = {values.comments} onChange={(e) => formUpdatednotEnclosved(e, "comments", "comments")}></textarea>
             <div className="label !pb-1">
@@ -104,5 +96,15 @@ return (
     </form>
 );
 };
+
+
+export const SubmitReportFormActions = ({ onSubmitClicked, onCancelClicked}) => (
+    <div className="modal-action">
+        <form method='dialog' className="flex w-full justify-end gap-2">
+            <button onClick={onSubmitClicked} type="button" className="btn btn-primary bg-neutral">Submit Report</button>
+            <button onClick={onCancelClicked} type='reset' className='btn btn-neutral'>Cancel</button>
+        </form>
+    </div>
+)
 
 export default SubmitReportForm;
