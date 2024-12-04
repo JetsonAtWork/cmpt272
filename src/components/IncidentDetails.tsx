@@ -27,16 +27,10 @@ function IncidentDetailsContent() {
     const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
     const [actionType, setActionType] = useState(null)
     const [passwordError, setPasswordError] = useState("")
+    const [incidentDialogIsOpen, setIncidentDialogIsOpen] = useState(false);
     const incident = currentIncidents.find(incident => incident.id === selectedIncident);
     const passwordRef = useRef(null)
     const passwordDialogRef= useRef(null)
-
-    const handleIncidentFormSubmission = (submission) => {
-        deleteIncident(incident.id)
-    }
-    function handleIncidentFormCancelled() {
-  
-    }
 
     const closePasswordDialog =()=>{
         if(passwordDialogRef.current){ 
@@ -75,10 +69,7 @@ function IncidentDetailsContent() {
                 }
             }
             else if(actionType == "modifyReport"){
-                const incidentDialog = document.getElementById('edit-incident-form-dialog') as HTMLDialogElement;
-                if(incidentDialog){
-                    incidentDialog.showModal()
-                }
+                setIncidentDialogIsOpen(true);
             }
             closePasswordDialog()
         }
@@ -161,10 +152,10 @@ function IncidentDetailsContent() {
                 incidentPosition={{lat: incident.location.latlng.lat, lon: incident.location.latlng.lng}}
                 dialogID='edit-incident-form-dialog'
                 formID='incident-form'
-                onIncidentFormSubmit={handleIncidentFormSubmission}
-                onIncidentFormCancel={handleIncidentFormCancelled}
                 incidentDetails={incident}
-        />
+                isOpen={incidentDialogIsOpen}
+                setIsOpen={setIncidentDialogIsOpen}
+            />
         </>
     );
 }

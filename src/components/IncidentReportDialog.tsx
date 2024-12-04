@@ -9,10 +9,10 @@ import { v4 as uuidv4 } from 'uuid';
 type IncidentReportDialogProps = {
     dialogID: string,
     formID: string,
-    onIncidentFormSubmit: submitEmergencyFormFn,
-    onIncidentFormCancel: () => void,
     incidentPosition?: mapPosition,
     incidentDetails?: Incident,
+    isOpen: boolean,
+    setIsOpen: (isOpen: boolean) => void,
 }
 const initialFormValues: Incident = {
     id: "",
@@ -34,10 +34,10 @@ const initialFormValues: Incident = {
 export const IncidentReportDialog = ({
     dialogID,
     formID,
-    onIncidentFormSubmit,
-    onIncidentFormCancel,
     incidentPosition,
-    incidentDetails
+    incidentDetails,
+    isOpen,
+    setIsOpen,
 }: IncidentReportDialogProps) => {
     const [formErrors, setFormErrors] = useState({})
     const [formValues, setFormValues] = useState<Incident>(initialFormValues);
@@ -87,10 +87,9 @@ export const IncidentReportDialog = ({
     }
 
     function closeDialog() {
-        const dialog = document.getElementById(dialogID) as HTMLDialogElement
+        setIsOpen(false);
         setFormValues(initialFormValues)
         setFormErrors({})
-        dialog.close()
     }
 
     function openExistingIncident() {
@@ -101,11 +100,11 @@ export const IncidentReportDialog = ({
         if (incidentDetails) {
             openExistingIncident();
         }
-    }, [incidentDetails]);
+    }, [isOpen]);
 
 
     return (
-        <dialog id={dialogID} className="modal" onClose={onIncidentFormCancel}>
+        <dialog id={dialogID} className="modal" open={isOpen}>
             <div className="modal-box">
                 <h3 className="font-bold text-lg">Witness Report Form</h3>
                 {/* Incident form goes here */}

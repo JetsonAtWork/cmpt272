@@ -8,28 +8,15 @@ import IncidentList from "@/components/IncidentList";
 import AppHeader from "@/components/AppHeader";
 import IncidentDetails from "@/components/IncidentDetails";
 import ReportMap from '@/components/ReportMap'
-import { beginIncidentCreationFn, mapPosition, submitEmergencyFormFn } from '@/types'
+import { beginIncidentCreationFn, mapPosition } from '@/types'
 import { IncidentReportDialog } from '@/components/IncidentReportDialog'
 import { useState } from 'react'
 
 function App() {
-  const [newIncidentPosition, setNewIncidentPosition] = useState<mapPosition | null>()
+  const [newIncidentPosition, setNewIncidentPosition] = useState<mapPosition | null>();
+  const [incidentDialogIsOpen, setIncidentDialogIsOpen] = useState(false);
   const startIncidentForm: beginIncidentCreationFn = (lat, lon) => {
-    const incidentDialog = document.getElementById('incident-form-dialog') as HTMLDialogElement
-    if (incidentDialog) {
-      incidentDialog.showModal()
-    } else {
-      console.error('could not find incident dialog element')
-    }
-  }
-  const handleIncidentFormSubmission: submitEmergencyFormFn = (submission) => {
-
-  }
-  function handleIncidentFormCancelled() {
-
-  }
-  function handleDialogFinished() {
-    setNewIncidentPosition(null)
+    setIncidentDialogIsOpen(true);
   }
   return (
     <>
@@ -60,8 +47,9 @@ function App() {
           incidentPosition={newIncidentPosition}
           dialogID='incident-form-dialog'
           formID='incident-form'
-          onIncidentFormSubmit={handleIncidentFormSubmission}
-          onIncidentFormCancel={handleIncidentFormCancelled}
+          incidentDetails={null}
+          isOpen={incidentDialogIsOpen}
+          setIsOpen={setIncidentDialogIsOpen}
         />
       </AppContextProvider>
     </>
