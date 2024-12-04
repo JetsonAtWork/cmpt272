@@ -48,7 +48,7 @@ const FormMap = ({
     return null;
   };
   function handleMapClicked(e: LeafletMouseEvent) {
-    placeCandidateMarker(e.latlng)
+    // placeCandidateMarker(e.latlng)
   }
 
   function panMapToLatLng(latLng: LatLng, zoomAmount?: number) {
