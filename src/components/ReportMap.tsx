@@ -6,23 +6,12 @@ import { Marker as MarkerElement } from 'react-leaflet'
 import config from '@/config';
 import useAppContext from '@/hooks/useAppContext';
 import { beginIncidentCreationFn, Incident, mapPosition } from '@/types';
-import { curry } from '@/utils/miscUtils';
+import { curry, getMapIcon } from '@/utils/miscUtils';
 
-type ReportMapProps = {
-  startIncidentForm: beginIncidentCreationFn,
-  newIncidentPosition: mapPosition,
-  setNewIncidentPosition: (newPosition: mapPosition) => void
-}
-const ReportMap = ({ 
-  startIncidentForm, 
-  newIncidentPosition,
-  setNewIncidentPosition
-}: ReportMapProps) => {
-  const [markers, setMarkers] = useState([]); // All markers, TODO: I noticed this is no longer really used. We can probably remove it.
+const ReportMap = () => {
   const [address, setAddress] = useState('');
   const [map, setMap] = useState<Map>()
   const inputRef = useRef<HTMLInputElement>()
-  const markerInCreationPopupRef = useRef()
   const { 
     isMacOS,
     selectedIncident,
@@ -37,12 +26,6 @@ const ReportMap = ({
       const results = await searchForLocation({ query: address });
       if (results.length > 0) {
         const { lat, lon, display_name } = results[0]; // Extract name and coordinates
-        // Add the new marker with its name, other info needs to be added here
-        // setMarkers((prevMarkers) => [
-          //   ...prevMarkers,
-          //   { lat, lon, name: display_name },
-          // ]); 
-          placeCandidateMarker(lat, lon)
       } else {
         alert('Address not found');
       }
@@ -54,23 +37,22 @@ const ReportMap = ({
     }
   };
 
-  const handleDeleteMarker = (indexToRemove) => {
-    setMarkers((prevMarkers) => prevMarkers.filter((_, index) => index !== indexToRemove)); // Remove marker from the list
-  };
+  const getBounds = () => {
+    const bounds = map.getBounds();
+    return bounds.extend([bounds.getSouth() - (0.035 * (bounds.getNorth() - bounds.getSouth())), bounds.getEast()]);
+  }
 
   const MapEvents = () => {
     useMapEvents({
       moveend: () => {
         if (map) {
-          const bounds = map.getBounds(); // Get current map bounds
+          const bounds = getBounds(); // Get current map bounds
           const visible = currentIncidents.filter((incident) =>
             bounds.contains(incident.location.latlng)
           ); // Filter markers within bounds
           setVisibleIncidents(visible);
-        } else {console.log('no map')}
-      },
-      click: handleMapClicked
-      
+        } else {}
+      }
     });
     return null;
   };
@@ -79,7 +61,7 @@ const ReportMap = ({
 // It checks current map bounds using the map reference and filters markers that are within those bounds, then updates visibleMarkers state.
   useEffect(() => {
     if (map) {
-      const bounds = map.getBounds();
+      const bounds = getBounds(); // Get current map bounds
       const visible = currentIncidents.filter((incident) =>
         bounds.contains(incident.location.latlng)
       );
@@ -91,7 +73,6 @@ const ReportMap = ({
     if (!loading && map) {
       const currentIncident = currentIncidents.find((incident) => incident.id === selectedIncident)
       if (!currentIncident) return
-      console.log('beginning selectedIncidentPan');
       panMapToLatLng(currentIncident.location.latlng)
     }
   },[selectedIncident])
@@ -110,7 +91,6 @@ const ReportMap = ({
   }
 
   function handleMarkerClicked(incident: Incident, e: LeafletMouseEvent) {
-    console.log('marker clicked', incident, e);
     setSelectedIncident(incident.id)
   }
 
@@ -124,30 +104,10 @@ const ReportMap = ({
       { animate: true,   }
     )
   }
-  // console.log('map cebter', map?.getCenter());
-
-  function handleMapClicked(e: LeafletMouseEvent) {
-    console.log('map clicked', e);
-    const { lat, lng } = e.latlng
-    placeCandidateMarker(lat, lng)
-  }
-
-  function placeCandidateMarker(lat, lon) {
-    setNewIncidentPosition({ lat, lon })
-    panMapToLatLng(new LatLng(lat,lon)) // Pan map to new marker
-  }
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
     handleSearch()
-  }
-  
-  function handleCandidateLocationConfirmed() {
-    startIncidentForm(newIncidentPosition.lat, newIncidentPosition.lon)
-  }
-
-  function cancelIncidentCreation() {
-    setNewIncidentPosition(null)
   }
 
   function handleMapReady(mapCreationEvent) {
@@ -197,16 +157,6 @@ const ReportMap = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        { newIncidentPosition && (
-          <MarkerCandidate
-            map={map}
-            popupRef={markerInCreationPopupRef}
-            candidate={newIncidentPosition}
-            setCandidate={setNewIncidentPosition}
-            onLocationConfirm={handleCandidateLocationConfirmed}
-            onLocationDeny={cancelIncidentCreation}
-          />
-        )}
         {currentIncidents?.map((incident, index) => (
           <IncidentMarker 
             key={incident.id} 
@@ -217,7 +167,6 @@ const ReportMap = ({
         ))}
         <MapEvents />
       </MapContainer>
-      {/* <MarkersList {...{markers, visibleMarkers, handleDeleteMarker}}/> */}
     </div>
   );
 };
@@ -252,7 +201,6 @@ const MarkerCandidate = ({ map, popupRef, candidate, setCandidate, onLocationCon
   }
 
   function handleConfirmClicked() {
-    console.log('confirm clicked');
     popupRef._closeButton.click()
     onLocationConfirm()
   }
@@ -296,7 +244,6 @@ const MarkerCandidate = ({ map, popupRef, candidate, setCandidate, onLocationCon
   )
 }
 
-
 type IncidentMarkerProps = {
   incident: Incident,
   selectedIncident: string
@@ -325,16 +272,18 @@ const IncidentMarker = ({
     <MarkerElement 
       position={incident.location.latlng}
       eventHandlers={{click: onClick}}
+      icon={getMapIcon(`stroke-[20px] stroke-black ${selectedIncident === incident?.id ? 'text-secondary' : 'text-primary'}`)}
       ref={markerRef}
       >
-      <PopupElement autoPan={false} keepInView={false} ref={handlePopupReady} className='custom-popup'>
-        <div className="leaflet-fade-anim card card-compact pointer-events-auto min-w-[19rem] bg-base-300 text-center">
-          <div className="card-body items-center">
-            <div className="card-title w-fit text-primary">
-              {incident.emergencyDesc}
-              {selectedIncident === incident.id && ('I\'m the selected incident. Hooray!')}
-            </div>
-          </div>
+      <PopupElement
+        autoPan={false}
+        keepInView={false}
+        ref={handlePopupReady}
+        className='custom-popup'
+      > 
+        <div className="leaflet-fade-anim rounded-2xl pointer-events-auto py-4 px-4 w-fit bg-base-300 text-center">
+          <p className='text-primary text-2xl font-medium !m-0 whitespace-nowrap'>{incident.emergencyDesc}</p>
+          <p className='whitespace-nowrap text-base-content !m-0'>{incident.location.address}</p>
         </div>
       </PopupElement>
   </MarkerElement>

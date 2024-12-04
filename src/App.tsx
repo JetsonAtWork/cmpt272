@@ -13,8 +13,7 @@ import { IncidentReportDialog } from '@/components/IncidentReportDialog'
 import { useState } from 'react'
 
 function App() {
-  const [newIncidentPosition, setNewIncidentPosition] = useState<mapPosition | null>()
-  const startIncidentForm: beginIncidentCreationFn = (lat, lon) => {
+  const startIncidentForm= () => {
     const incidentDialog = document.getElementById('incident-form-dialog') as HTMLDialogElement
     if (incidentDialog) {
       incidentDialog.showModal()
@@ -25,27 +24,15 @@ function App() {
   const handleIncidentFormSubmission: submitEmergencyFormFn = (submission) => {
 
   }
-  function handleIncidentFormCancelled() {
-
-  }
-  function handleDialogFinished() {
-    setNewIncidentPosition(null)
-  }
+  
   return (
     <>
       <AppContextProvider> {/* Everything that needs context should be inside this */}
         <div className="flex flex-col h-full">
-          <AppHeader/>
-
+          <AppHeader startIncidentForm={startIncidentForm}/>
           <MainLayoutContainer>
             <MapLayoutContainer>
-              <ReportMap
-                {...{
-                  startIncidentForm,
-                  newIncidentPosition,
-                  setNewIncidentPosition
-                }}
-              />
+              <ReportMap/>
             </MapLayoutContainer>
 
             <div className="flex flex-col gap-4">
@@ -57,11 +44,9 @@ function App() {
         </div>
 
         <IncidentReportDialog
-          incidentPosition={newIncidentPosition}
           dialogID='incident-form-dialog'
           formID='incident-form'
           onIncidentFormSubmit={handleIncidentFormSubmission}
-          onIncidentFormCancel={handleIncidentFormCancelled}
         />
       </AppContextProvider>
     </>
