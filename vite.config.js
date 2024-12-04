@@ -20,6 +20,7 @@ export default defineConfig({
       plugins: [tailwindcss()]
     }
   },
+  publicDir: './assets',
   plugins: [
     react(),
     // tailwindcss()

@@ -1,6 +1,9 @@
 import {MD5} from 'crypto-js'
 import encBase64 from 'crypto-js/enc-base64';
 import {Incident} from "@/types";
+import { useEffect } from 'react';
+import { DivIcon, divIcon, Icon, LatLng } from 'leaflet';
+import { renderToString } from 'react-dom/server';
 /** 
  * @Kyaahn
  * This converts a file to Base64 (a string).
@@ -96,11 +99,45 @@ function curry(fn, ...params: any[]) {
     return curried(...params);
 };
 
+function rangeArray(start, end) {
+    if (start > end) return [];
+    if (Number.isNaN(start) || Number.isNaN(end)) return [];
+    return Array(end - start + 1)
+        .fill()
+        .map((_, idx) => start + idx);
+}
+function latLngsEqual(a: LatLng ,b: LatLng) {
+    if (!a || !b) return false
+    return a.lat === b.lng && a.lng === b.lng
+}
+function getMapIcon(svgClassName: string) {
+    return new DivIcon({
+        html: renderToString(
+            <div className='relative'>
+                <svg className={`w-10 h-10  ${svgClassName} !z-[1000]`} width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fillRule="evenodd" d="M256 42.667c82.475 0 149.334 66.859 149.334 149.333c0 27.204-7.254 52.694-19.983 74.676Q372.62 288.657 256 490.667q-116.622-202.01-129.35-223.991c-12.73-21.982-19.984-47.472-19.984-74.676c0-82.474 66.859-149.333 149.333-149.333M256 128c-35.346 0-64 28.654-64 64s28.654 64 64 64s64-28.653 64-64c0-35.346-28.653-64-64-64"/></svg>
+                <img width={60} height={60} className='absolute bottom-0 left-2 -z-[10]' src='shadow.png'/>
+            </div>
+    ),
+        iconSize : [40, 40],
+        iconAnchor : [20, 40],
+        popupAnchor : [0, -35],
+        // shadowSize: [40,40],
+        // shadowAnchor: [4,40],
+        // shadowUrl: 'shadow-marker.png',
+        // shadowRetinaUrl: 'shadow-marker.png',
+        className: ''
+        
+    })
+}
+
   export {
     fileToBase64,
     hashPassword,
     seedCurrentIncidents,
     condStr,
     validatePhoneNumber,
-    curry
+    curry,
+    rangeArray,
+    latLngsEqual,
+    getMapIcon,
   }
