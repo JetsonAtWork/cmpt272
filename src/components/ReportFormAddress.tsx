@@ -82,7 +82,7 @@ export const ReportFormAddress = ({ setAddressConfirmed, addressConfirmed, chang
         <small className="text-base-content opacity-50 text-xs flex flex-row items-center gap-1 mt-4">
             {/*This icon is from Google Material Icons (https://fonts.google.com/icons) (info)*/}
             <svg className='w-10' xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-            Specify the location of the incident by searching up an address or clicking the map. Once a pin is on the map, click and drag to move it.
+            Specify the location by searching for an address, place name, or coordinates. Once a pin is on the map, click and drag to move it.
         </small>
       </>
     );
@@ -104,7 +104,7 @@ const AddressInput = ({ onAddressChange, addressChangeWarning, initialAddress, e
   return (
     <>
       <div className="label">
-        <span className="label-text">Address or Coordinates</span>
+        <span className="label-text">Location</span>
           { error && (
               <span className="label-text-alt !text-error">{error}</span>
           )}
@@ -115,7 +115,7 @@ const AddressInput = ({ onAddressChange, addressChangeWarning, initialAddress, e
             onBlur={onBlur}
             id='search'
             type="text"
-            placeholder="Search Address or Coordinates"
+            placeholder="Search Address, Place Name, or Coordinates"
             value={addressText}
             onChange={(e) => setAddressText(e.target.value)}
             className={`join-item w-full !text-sm bg-white !rounded-r-none`}
