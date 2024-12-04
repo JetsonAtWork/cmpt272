@@ -10,7 +10,7 @@ export const DialogStepper = ({ currentStep, stepNames, onStepClicked }) => {
               onClick={() => onStepClicked(stepIndex)}
               className={`
                   step step-neutral 
-                  ${condStr(currentStep >= stepIndex,'step-primary')}
+                  ${condStr(currentStep >= stepIndex,'step-primary hover:cursor-pointer')}
                 `}
               >
               {stepNames[stepIndex - 1]}

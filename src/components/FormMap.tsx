@@ -9,13 +9,15 @@ import { beginIncidentCreationFn, Incident, mapPosition } from '@/types';
 import { condStr, curry, getMapIcon, latLngsEqual } from '@/utils/miscUtils';
 
 type FormMapProps = {
-  markerLatLng: LatLng,
-  setMarkerLatLng: (newPosition: LatLng) => void,
-  addressConfirmed: boolean,
+  markerLatLng: LatLng
+  setMarkerLatLng: (newPosition: LatLng) => void
+  addressConfirmed: boolean
   handleMarkerConfirmed: () => void
   handleMarkerDenied: () => void
+  loading: boolean
 }
 const FormMap = ({ 
+  loading,
   markerLatLng,
   setMarkerLatLng,
   handleMarkerConfirmed,
@@ -71,9 +73,11 @@ const FormMap = ({
   }
 
   return (
-    <div className='w-full h-[20rem] rounded-2xl flex flex-col overflow-hidden relative mt-4'>
+    <div className={`w-full h-[20rem] rounded-2xl flex flex-col overflow-hidden relative mt-4 ${condStr(loading,'disabled pointer-events-none ')}`}>
+        <div className={`absolute w-full h-full  flex justify-center items-center top-0 left-0 bg-black transition-opacity bg-opacity-60 z-[20000] ${loading ? 'opacity-100 pointer-events-auto' : 'opacity-0  pointer-events-none '}`}>
+          <div className="loading loading-lg loading-spinner"></div>
+        </div>
       {/* Bar to enter address */}
-      
       {/* Map */}
       <MapContainer
         whenReady={handleMapReady}

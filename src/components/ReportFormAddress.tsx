@@ -4,11 +4,12 @@ import { mapPosition } from '@/types';
 import { searchForLocation } from '@/utils/locationUtils';
 import { condStr } from '@/utils/miscUtils';
 import { LatLng } from 'leaflet';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const ReportFormAddress = ({ setAddressConfirmed, addressConfirmed, changeAddress, location, formErrors }) => {
   const [addressQueryError, setAddressQueryError] = useState(null)
   const [positionChangeWarning, setPositionChangeWarning] = useState(null)
+  const [queryLoading, setQueryLoading] = useState(false)
 
   // Address Changed via marker placement (drag or map click)
   async function changeLocationPosition(newPosition: LatLng) {
@@ -25,15 +26,18 @@ export const ReportFormAddress = ({ setAddressConfirmed, addressConfirmed, chang
     }
       try {
         setPositionChangeWarning(null)
-        const locationQueryResults = await searchForLocation({ query: newAddress })
-        const firstResult = locationQueryResults?.[0]
-        if (firstResult) {
-          setAddressQueryError(null)
-          setAddressConfirmed(false)
-          changeAddress((prev) => ({latlng: new LatLng(firstResult.lat, firstResult.lon), address: newAddress}))
-        } else {
-            throw new console.error();
-        }
+        setQueryLoading(true)
+        searchForLocation({ query: newAddress }).then((queryResults) => {
+          setQueryLoading(false)
+          const firstResult = queryResults?.[0]
+          if (firstResult) {
+            setAddressQueryError(null)
+            setAddressConfirmed(false)
+            changeAddress((prev) => ({latlng: new LatLng(firstResult.lat, firstResult.lon), address: newAddress}))
+          } else {
+              throw new Error();
+          }
+        })
       } catch (error) {
         setAddressQueryError('There was an issue finding that address on the map. Please enter another address or click the location of the incident on the map')
       }
@@ -49,10 +53,17 @@ export const ReportFormAddress = ({ setAddressConfirmed, addressConfirmed, chang
       })
     }
 
+    function handleSearchBlur(e) {
+      if (location.address != e.target.value) {
+        changeLocationAddress(e.target.value)
+      } 
+    }
+
     return (    
       <>
-
         <AddressInput
+          onBlur={handleSearchBlur}
+          initialAddress={location.address}
           onAddressChange={changeLocationAddress}
           addressChangeWarning={positionChangeWarning} 
           error={formErrors.address}
@@ -61,6 +72,7 @@ export const ReportFormAddress = ({ setAddressConfirmed, addressConfirmed, chang
           <p className='text-error'>{addressQueryError}</p>
         )}
         <FormMap
+          loading={queryLoading}
           addressConfirmed={addressConfirmed}
           markerLatLng={location.latlng}
           setMarkerLatLng={changeLocationPosition}
@@ -76,17 +88,19 @@ export const ReportFormAddress = ({ setAddressConfirmed, addressConfirmed, chang
     );
 }
 
-const AddressInput = ({ onAddressChange, addressChangeWarning, error }) => {
+const AddressInput = ({ onAddressChange, addressChangeWarning, initialAddress, error, onBlur }) => {
   const [addressText, setAddressText] = useState('')
+  useEffect(() => {
+    if (initialAddress && (initialAddress != addressText)) {
+      setAddressText(initialAddress)
+    } 
+  },[initialAddress])
+
   function handleAddressTextChangeFinish(e) {
-    e.preventDefault()
-    
+    e.preventDefault()  
     onAddressChange(addressText)
   }
-  function handleInputBlur(e) {
-    // TODO change this to be more user friendly
-    handleAddressTextChangeFinish(e)
-  }
+
   return (
     <>
       <div className="label">
@@ -98,7 +112,7 @@ const AddressInput = ({ onAddressChange, addressChangeWarning, error }) => {
       <form onSubmit={handleAddressTextChangeFinish} className="search-bar flex ">
         <label className={`input input-bordered !join !pr-0 flex items-center w-full !rounded-r-none ${condStr(!!addressChangeWarning, 'input-warning')} ${condStr(!!error, 'text-')}`} htmlFor="search">
           <input
-            onBlur={handleInputBlur}
+            onBlur={onBlur}
             id='search'
             type="text"
             placeholder="Search Address"
