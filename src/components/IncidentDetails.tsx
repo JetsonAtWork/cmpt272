@@ -3,7 +3,8 @@ import IncidentStatusBadge from "@/components/IncidentStatusBadge";
 import React, { useState, useRef } from 'react';
 import { hashPassword } from '@/utils/miscUtils'
 import config from "@/config";
-
+import { IncidentReportDialog } from '@/components/IncidentReportDialog'
+import {submitEmergencyFormFn, mapPosition } from '@/types'
 
 
 function IncidentDetails() {
@@ -22,13 +23,20 @@ function IncidentDetails() {
 }
 
 function IncidentDetailsContent() {
-    const {currentIncidents, selectedIncident, deleteIncident, resolveIncident } = useAppContext();
+    const {currentIncidents, selectedIncident, deleteIncident, resolveIncident, reopenIncident } = useAppContext();
     const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
     const [actionType, setActionType] = useState(null)
     const [passwordError, setPasswordError] = useState("")
     const incident = currentIncidents.find(incident => incident.id === selectedIncident);
     const passwordRef = useRef(null)
     const passwordDialogRef= useRef(null)
+
+    const handleIncidentFormSubmission: submitEmergencyFormFn = (submission) => {
+
+    }
+    function handleIncidentFormCancelled() {
+  
+    }
 
     const closePasswordDialog =()=>{
         if(passwordDialogRef.current){ 
@@ -46,18 +54,28 @@ function IncidentDetailsContent() {
         const enteredPassword = passwordRef.current.value
         const enteredHashedPassword = hashPassword(enteredPassword)
         if(enteredHashedPassword == config.password){
-            if(actionType == "modify"){
+            if(actionType == "modifyStatus"){
                 //Modify the Incident
                 resolveIncident(incident.id)
                 if(incident.status === "open"){
                     resolveIncident(incident.id)
                 }
+                else{
+                    reopenIncident(incident.id)
+                }
             }
-            if(actionType == "delete"){
+            else if(actionType == "delete"){
                 //delete the Incident
                 if(incident){
                     deleteIncident(incident.id)
                 }
+            }
+            else if(actionType == "modifyReport"){
+                const incidentDialog = document.getElementById('edit-incident-form-dialog') as HTMLDialogElement;
+                if(incidentDialog){
+                    incidentDialog.showModal()
+                }
+                //deleteIncident(incident.id)
             }
             closePasswordDialog()
         }
@@ -72,8 +90,11 @@ function IncidentDetailsContent() {
             <div className="mb-2 flex justify-between">
                 <h3 className="text-primary text-lg">Details</h3>
 
-                <div className="flex items-center gap-2">
-                    <button id = "modify" className="btn btn-neutral btn-sm" onClick={() => openPasswordDialog("modify")}>
+                <div className="flex items-center gap-3">
+                    <button id = "modifyStatus" className="btn btn-neutral btn-sm" onClick={() => openPasswordDialog("modifyReport")}>
+                        Modify Report
+                    </button>
+                    <button id = "modify" className="btn btn-neutral btn-sm" onClick={() => openPasswordDialog("modifyStatus")}>
                         Update Status
                     </button>
 
@@ -107,6 +128,7 @@ function IncidentDetailsContent() {
 
                 <IncidentDetailsImage pictureLink={incident.pictureLink}/>
             </div>
+            
             <dialog ref = {passwordDialogRef} id="passwordDialog" className="modal">
                 <div className="modal-box">
                   <h3 className="font-bold text-lg">Enter Your Password</h3>
@@ -132,7 +154,14 @@ function IncidentDetailsContent() {
                   )}
                 </div>
             </dialog>
-            
+            <IncidentReportDialog
+                incidentPosition={{lat: incident.location.latlng.lat, lon: incident.location.latlng.lng}}
+                dialogID='edit-incident-form-dialog'
+                formID='incident-form'
+                onIncidentFormSubmit={handleIncidentFormSubmission}
+                onIncidentFormCancel={handleIncidentFormCancelled}
+                incidentDetails={incident}
+        />
         </>
     );
 }

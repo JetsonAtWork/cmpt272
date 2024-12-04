@@ -11,7 +11,8 @@ type IncidentReportDialogProps = {
     formID: string,
     onIncidentFormSubmit: submitEmergencyFormFn,
     onIncidentFormCancel: () => void,
-    incidentPosition?: mapPosition
+    incidentPosition?: mapPosition,
+    incidentDetails?: Incident,
 }
 const initialFormValues: Incident = {
     id: "",
@@ -35,27 +36,28 @@ export const IncidentReportDialog = ({
     formID,
     onIncidentFormSubmit,
     onIncidentFormCancel,
-    incidentPosition
+    incidentPosition,
+    incidentDetails
 }: IncidentReportDialogProps) => {
     const [formErrors, setFormErrors] = useState({})
     const [formValues, setFormValues] = useState<Incident>(initialFormValues);
 
     const { addIncident, setSelectedIncident } = useAppContext()
-
+    
     function prepareFormSubmit() {
         //first create and add uuid 
         const newUuid = uuidv4();
         const finalValues: Incident = {
             ...formValues,
-            id: newUuid,
+            id:newUuid,
             status: 'open',
             location: {
                 ...formValues.location,
-                latlng: new LatLng(incidentPosition.lat, incidentPosition.lon)
+                latlng: new LatLng(incidentPosition?.lat||incidentPosition.lat, incidentPosition?.lon||incidentPosition.lon)
             }
         };
         addIncident(finalValues)
-        setSelectedIncident(newUuid)
+        setSelectedIncident(finalValues.id)
         closeDialog()
     }
 
@@ -89,6 +91,16 @@ export const IncidentReportDialog = ({
         setFormErrors({})
         dialog.close()
     }
+
+    function openExistingIncident() {
+        setFormValues(incidentDetails);
+    }
+
+    React.useEffect(() => {
+        if (incidentDetails) {
+            openExistingIncident();
+        }
+    }, [incidentDetails]);
 
 
     return (
